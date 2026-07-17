@@ -226,8 +226,9 @@ const heroImg = getProjectImages('prime-park')[0];
   gsap.registerPlugin(ScrollTrigger);
 
   function initHero() {
-    const hero = document.querySelector('[data-hero]');
-    if (!hero) return;
+    const hero = document.querySelector<HTMLElement>('[data-hero]');
+    if (!hero || hero.dataset.heroReady) return;
+    hero.dataset.heroReady = '1';
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) return;

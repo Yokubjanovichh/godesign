@@ -254,8 +254,11 @@ const secondary = photos.slice(1, 4);
   gsap.registerPlugin(ScrollTrigger);
 
   function initAbout() {
+    const imgs = document.querySelectorAll<HTMLElement>('[data-shot-img]');
+    if (!imgs.length || imgs[0].dataset.pxReady) return;
+    imgs[0].dataset.pxReady = '1';
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.querySelectorAll<HTMLElement>('[data-shot-img]').forEach((img) => {
+    imgs.forEach((img) => {
       gsap.fromTo(
         img,
         { yPercent: -6 },

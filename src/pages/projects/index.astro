@@ -156,8 +156,11 @@ import { projects, getCover } from '../../data/projects';
   gsap.registerPlugin(ScrollTrigger);
 
   function initProjectsList() {
+    const imgs = document.querySelectorAll<HTMLElement>('.pcard [data-shot-img]');
+    if (!imgs.length || imgs[0].dataset.pxReady) return;
+    imgs[0].dataset.pxReady = '1';
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.querySelectorAll<HTMLElement>('.pcard [data-shot-img]').forEach((img) => {
+    imgs.forEach((img) => {
       gsap.fromTo(
         img,
         { yPercent: -6 },

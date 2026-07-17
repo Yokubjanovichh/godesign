@@ -106,6 +106,10 @@ const ogImage = new URL(image, Astro.site);
         gsap.ticker.lagSmoothing(0);
       }
 
+      // Перед сменой страницы убиваем старые ScrollTrigger (иначе копятся)
+      document.addEventListener('astro:before-swap', () => {
+        ScrollTrigger.getAll().forEach((t) => t.kill());
+      });
       // При переходах View Transitions — наверх и пересчёт триггеров
       document.addEventListener('astro:after-swap', () => {
         lenis?.scrollTo(0, { immediate: true });

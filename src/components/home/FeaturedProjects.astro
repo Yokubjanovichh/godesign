@@ -181,8 +181,9 @@ import { featuredProjects, getCover } from '../../data/projects';
   gsap.registerPlugin(ScrollTrigger);
 
   function initFeatured() {
-    const section = document.querySelector('[data-featured]');
-    if (!section) return;
+    const section = document.querySelector<HTMLElement>('[data-featured]');
+    if (!section || section.dataset.ftReady) return;
+    section.dataset.ftReady = '1';
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     // Появление кадра — clip-path раскрытие

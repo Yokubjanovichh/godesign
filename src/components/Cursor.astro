@@ -73,17 +73,26 @@
 </style>
 
 <script>
+  let cursorAC: AbortController | null = null;
+  let cursorRAF = 0;
+
   function initCursor() {
+    // Чистим прошлые слушатели и цикл (View Transitions)
+    cursorAC?.abort();
+    cancelAnimationFrame(cursorRAF);
+
     const cursor = document.getElementById('cursor');
     if (!cursor) return;
     if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+
+    cursorAC = new AbortController();
+    const { signal } = cursorAC;
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let curX = mouseX;
     let curY = mouseY;
     let shown = false;
-    let raf = 0;
 
     const onMove = (e: MouseEvent) => {
       mouseX = e.clientX;
@@ -98,7 +107,7 @@
       curX += (mouseX - curX) * 0.18;
       curY += (mouseY - curY) * 0.18;
       cursor.style.transform = `translate3d(${curX}px, ${curY}px, 0) translate(-50%, -50%)`;
-      raf = requestAnimationFrame(loop);
+      cursorRAF = requestAnimationFrame(loop);
     };
 
     // Делегирование: реагируем на data-cursor="view" и обычные ссылки
@@ -110,10 +119,9 @@
       else cursor.classList.add('is-hover');
     };
 
-    window.addEventListener('mousemove', onMove, { passive: true });
-    document.addEventListener('mouseover', onOver, { passive: true });
-    document.addEventListener('mouseleave', () => (cursor.style.opacity = '0'));
-    cancelAnimationFrame(raf);
+    window.addEventListener('mousemove', onMove, { passive: true, signal });
+    document.addEventListener('mouseover', onOver, { passive: true, signal });
+    document.addEventListener('mouseleave', () => (cursor.style.opacity = '0'), { signal });
     loop();
   }
 

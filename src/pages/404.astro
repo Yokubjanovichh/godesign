@@ -1,0 +1,83 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Страница не найдена — 404 | Ольга Горчакова"
+  description="Такой страницы не существует. Вернитесь на главную или посмотрите проекты Ольги Горчаковой."
+>
+  <section class="nf">
+    <div class="container nf-inner">
+      <p class="eyebrow reveal">Ошибка 404</p>
+      <h1 class="nf-title reveal" data-delay="1">
+        Эта страница<br /><span class="serif italic accent">не найдена</span>
+      </h1>
+      <p class="nf-lead reveal" data-delay="2">
+        Возможно, ссылка устарела или в адресе опечатка. Но всё самое красивое
+        по-прежнему на своих местах.
+      </p>
+      <div class="nf-actions reveal" data-delay="3">
+        <a href="/" class="nf-btn">На главную</a>
+        <a href="/projects" class="nf-link">Смотреть проекты <span>→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 78vh;
+    display: grid;
+    place-items: center;
+    padding-top: clamp(8rem, 16vh, 11rem);
+    padding-bottom: clamp(4rem, 9vw, 7rem);
+    text-align: center;
+  }
+  .nf-title {
+    font-size: clamp(2.8rem, 8vw, 6.5rem);
+    line-height: 1;
+    margin-top: 1.2rem;
+  }
+  .nf-lead {
+    max-width: 46ch;
+    margin: 1.8rem auto 0;
+    font-size: 1.1rem;
+    color: var(--c-ink-soft);
+  }
+  .nf-actions {
+    display: flex;
+    gap: 1.6rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 2.6rem;
+  }
+  .nf-btn {
+    background: var(--c-ink);
+    color: var(--c-paper);
+    border-radius: 100px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background 0.35s var(--ease);
+  }
+  .nf-btn:hover {
+    background: var(--c-accent);
+  }
+  .nf-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--c-accent);
+    padding-bottom: 0.2rem;
+    transition: gap 0.35s var(--ease);
+  }
+  .nf-link span {
+    color: var(--c-accent);
+    transition: transform 0.35s var(--ease);
+  }
+  .nf-link:hover {
+    gap: 0.9rem;
+  }
+</style>

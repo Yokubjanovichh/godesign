@@ -44,7 +44,12 @@ import Base from '../layouts/Base.astro';
       <!-- Форма -->
       <div class="contact-form-wrap reveal" data-delay="2">
         <!-- action подключим к Web3Forms/Formspree при деплое -->
-        <form class="contact-form" method="POST" data-contact-form>
+        <!-- Web3Forms: вставьте свой ключ вместо YOUR_WEB3FORMS_ACCESS_KEY (web3forms.com — бесплатно) -->
+        <form class="contact-form" data-contact-form action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY" />
+          <input type="hidden" name="subject" value="Новая заявка с сайта GO design" />
+          <input type="hidden" name="from_name" value="GO design — сайт" />
+          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display: none" aria-hidden="true" />
           <div class="field">
             <label for="name">Имя</label>
             <input id="name" name="name" type="text" required autocomplete="name" />
@@ -80,11 +85,58 @@ import Base from '../layouts/Base.astro';
             Отправить заявку <span>→</span>
           </button>
           <p class="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+          <p class="form-result" data-form-result hidden></p>
         </form>
       </div>
     </div>
   </section>
 </Base>
+
+<script>
+  function initContactForm() {
+    const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+    const result = document.querySelector<HTMLElement>('[data-form-result]');
+    if (!form || !result) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const data = new FormData(form);
+
+      result.hidden = false;
+      result.className = 'form-result';
+      result.textContent = 'Отправляем…';
+      if (btn) btn.disabled = true;
+
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: data,
+          headers: { Accept: 'application/json' },
+        });
+        const json = await res.json();
+        if (json.success) {
+          form.reset();
+          result.classList.add('is-ok');
+          result.textContent =
+            'Спасибо! Заявка отправлена — свяжусь с вами в течение 1–2 рабочих дней.';
+        } else {
+          result.classList.add('is-err');
+          result.textContent =
+            'Не удалось отправить. Напишите на ongorchakova@gmail.com или в мессенджер.';
+        }
+      } catch {
+        result.classList.add('is-err');
+        result.textContent =
+          'Ошибка сети. Напишите на ongorchakova@gmail.com или в мессенджер.';
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    });
+  }
+  initContactForm();
+  document.addEventListener('astro:page-load', initContactForm);
+</script>
 
 <style>
   .contact {
@@ -227,6 +279,26 @@ import Base from '../layouts/Base.astro';
     font-size: 0.76rem;
     color: var(--c-ink-soft);
     text-align: center;
+  }
+  .form-result {
+    margin-top: 0.4rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius);
+    font-size: 0.92rem;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .form-result.is-ok {
+    background: color-mix(in srgb, var(--c-accent) 14%, var(--c-paper));
+    color: var(--c-accent-deep);
+  }
+  .form-result.is-err {
+    background: rgba(170, 60, 40, 0.1);
+    color: #9a3626;
+  }
+  .form-submit:disabled {
+    opacity: 0.6;
+    pointer-events: none;
   }
 
   @media (max-width: 860px) {

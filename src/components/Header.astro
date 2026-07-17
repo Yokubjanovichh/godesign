@@ -248,23 +248,31 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
 </style>
 
 <script>
+  let headerAC: AbortController | null = null;
+
   function initHeader() {
+    // Убираем прошлый слушатель scroll на window (иначе копится при переходах)
+    headerAC?.abort();
+
     const header = document.getElementById('site-header');
     const burger = document.getElementById('burger');
     const menu = document.getElementById('mobile-menu');
     if (!header) return;
 
+    headerAC = new AbortController();
+    const { signal } = headerAC;
+
     const onScroll = () =>
       header.classList.toggle('scrolled', window.scrollY > 40);
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true, signal });
 
     burger?.addEventListener('click', () => {
       const open = menu?.classList.toggle('open');
-      header.classList.toggle('menu-open', open);
+      header.classList.toggle('menu-open', !!open);
       burger.setAttribute('aria-expanded', String(!!open));
       document.body.style.overflow = open ? 'hidden' : '';
-    });
+    }, { signal });
 
     menu?.querySelectorAll('a').forEach((a) =>
       a.addEventListener('click', () => {
@@ -272,7 +280,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
         header.classList.remove('menu-open');
         burger?.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
-      })
+      }, { signal })
     );
   }
 

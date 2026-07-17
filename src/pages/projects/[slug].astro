@@ -340,6 +340,9 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
   gsap.registerPlugin(ScrollTrigger);
 
   function initProject() {
+    const hero = document.querySelector<HTMLElement>('.pj-hero');
+    if (!hero || hero.dataset.pjReady) return;
+    hero.dataset.pjReady = '1';
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     // Вход героя

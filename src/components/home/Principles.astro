@@ -148,11 +148,12 @@ const principles = [
   gsap.registerPlugin(ScrollTrigger);
 
   function initPrinciples() {
-    const section = document.querySelector('[data-principles]');
-    if (!section) return;
+    const section = document.querySelector<HTMLElement>('[data-principles]');
+    if (!section || section.dataset.prReady) return;
     const items = Array.from(section.querySelectorAll<HTMLElement>('[data-principle]'));
     const counter = section.querySelector('[data-counter]');
     if (!items.length) return;
+    section.dataset.prReady = '1';
 
     const isMobile = window.matchMedia('(max-width: 860px)').matches;
     if (isMobile || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
