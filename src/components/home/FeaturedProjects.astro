@@ -1,0 +1,217 @@
+---
+import { Image } from 'astro:assets';
+import { featuredProjects, getCover } from '../../data/projects';
+---
+
+<section class="featured" id="projects" data-featured>
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow">Портфолио</p>
+        <h2>Избранные<br />проекты</h2>
+      </div>
+      <a href="/projects" class="section-link">Все проекты <span>→</span></a>
+    </div>
+
+    <div class="proj-grid">
+      {
+        featuredProjects.map((p, i) => (
+          <a
+            href={`/projects/${p.slug}`}
+            class:list={['proj-card', `pos-${i}`]}
+            data-cursor="view"
+          >
+            <div class="proj-frame" data-proj-frame>
+              <div class="proj-img-move" data-proj-img>
+                <Image
+                  src={getCover(p.slug)}
+                  alt={`${p.title} — ${p.category}, ${p.area} м²`}
+                  widths={[440, 680, 900, 1160]}
+                  sizes="(max-width: 760px) 92vw, 46vw"
+                  class="proj-img"
+                />
+              </div>
+              <span class="proj-index serif">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <div class="proj-info">
+              <span class="proj-loc">
+                {p.location} · {p.area} м²
+              </span>
+              <h3 class="proj-title serif">{p.title}</h3>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .featured {
+    padding-block: clamp(4rem, 10vw, 8rem);
+  }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: 1.6rem;
+    border-bottom: 1px solid var(--c-line);
+  }
+  .section-head h2 {
+    margin-top: 0.8rem;
+  }
+  .section-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding-bottom: 0.3rem;
+    transition: color 0.3s var(--ease);
+  }
+  .section-link span {
+    transition: transform 0.35s var(--ease);
+  }
+  .section-link:hover {
+    color: var(--c-accent);
+  }
+  .section-link:hover span {
+    transform: translateX(0.4rem);
+  }
+
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: clamp(1.4rem, 3vw, 2.6rem) clamp(1.2rem, 2.5vw, 2rem);
+  }
+  .proj-card {
+    display: block;
+    grid-column: span 6;
+  }
+  .pos-0 { grid-column: span 7; }
+  .pos-1 { grid-column: span 5; margin-top: clamp(2rem, 8vw, 7rem); }
+  .pos-2 { grid-column: span 5; }
+  .pos-3 { grid-column: span 7; margin-top: clamp(-6rem, -6vw, -2rem); }
+  .pos-4 { grid-column: span 6; }
+  .pos-5 { grid-column: span 6; }
+
+  .proj-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--c-bg-warm);
+    aspect-ratio: 16 / 11;
+  }
+  .pos-1 .proj-frame,
+  .pos-2 .proj-frame {
+    aspect-ratio: 4 / 5;
+  }
+  .proj-img-move {
+    position: absolute;
+    inset: -14% 0;
+    will-change: transform;
+  }
+  .proj-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.96);
+    transition:
+      transform 1.2s var(--ease-out),
+      filter 0.6s var(--ease);
+  }
+  .proj-card:hover .proj-img {
+    transform: scale(1.05);
+    filter: saturate(1.06);
+  }
+  .proj-index {
+    position: absolute;
+    top: 1.1rem;
+    left: 1.4rem;
+    z-index: 2;
+    font-size: 1.05rem;
+    color: #fff;
+    mix-blend-mode: difference;
+    letter-spacing: 0.05em;
+  }
+
+  .proj-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-top: 1.1rem;
+  }
+  .proj-loc {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+  }
+  .proj-title {
+    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+    font-weight: 400;
+    transition: color 0.3s var(--ease);
+  }
+  .proj-card:hover .proj-title {
+    color: var(--c-accent);
+  }
+
+  @media (max-width: 760px) {
+    .proj-card,
+    .pos-0, .pos-1, .pos-2, .pos-3, .pos-4, .pos-5 {
+      grid-column: span 12;
+      margin-top: 0;
+    }
+    .proj-frame,
+    .pos-1 .proj-frame,
+    .pos-2 .proj-frame {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initFeatured() {
+    const section = document.querySelector('[data-featured]');
+    if (!section) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Появление кадра — clip-path раскрытие
+    section.querySelectorAll<HTMLElement>('[data-proj-frame]').forEach((frame) => {
+      gsap.fromTo(
+        frame,
+        { clipPath: 'inset(14% 8% 14% 8% round 4px)' },
+        {
+          clipPath: 'inset(0% 0% 0% 0% round 4px)',
+          ease: 'none',
+          scrollTrigger: { trigger: frame, start: 'top 90%', end: 'top 48%', scrub: 0.6 },
+        }
+      );
+    });
+
+    // Параллакс фотографии внутри кадра
+    section.querySelectorAll<HTMLElement>('[data-proj-img]').forEach((img) => {
+      gsap.fromTo(
+        img,
+        { yPercent: -8 },
+        {
+          yPercent: 8,
+          ease: 'none',
+          scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true },
+        }
+      );
+    });
+  }
+
+  initFeatured();
+  document.addEventListener('astro:page-load', initFeatured);
+</script>

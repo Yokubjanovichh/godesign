@@ -1,0 +1,180 @@
+---
+const principles = [
+  { t: 'Тёплые материалы', d: 'Натуральное дерево, камень, керамика, текстиль — тактильность, дарящая чувство «здесь спокойно».' },
+  { t: 'Цвет', d: 'Палитра под характер клиента. Цвет управляет настроением быстрее, чем сама планировка.' },
+  { t: 'Сценарии света', d: 'Общий, рабочий, акцентный, ночной — каждый сценарий под своё состояние и время суток.' },
+  { t: 'Климат', d: 'Температура, влажность, свежесть воздуха. Незаметный комфорт, который считываешь телом.' },
+  { t: 'Индивидуальная мебель', d: 'Мебель под реальные привычки, рост и сценарии жизни каждого члена семьи.' },
+  { t: 'Живые растения', d: 'Биологическая связь с природой. Пространство, которое дышит и меняется вместе с вами.' },
+  { t: 'Личные акценты', d: 'Место для памяти, историй и вещей, которые делают интерьер именно вашим.' },
+  { t: 'Ароматы', d: 'Обоняние — прямой канал к эмоции. Запах материалов и пространства, который успокаивает.' },
+];
+---
+
+<section class="principles" data-principles>
+  <div class="container principles-layout">
+    <aside class="principles-aside">
+      <p class="eyebrow reveal">Подход</p>
+      <h2 class="reveal" data-delay="1">Инструменты<br />места&nbsp;силы</h2>
+      <div class="principles-counter serif reveal" data-delay="2">
+        <span data-counter>01</span><span class="sep">/</span><span class="total">08</span>
+      </div>
+    </aside>
+
+    <ol class="principles-list">
+      {
+        principles.map((p, i) => (
+          <li class="principle" data-principle data-index={i}>
+            <span class="p-num serif">{String(i + 1).padStart(2, '0')}</span>
+            <div class="p-body">
+              <h3 class="p-title serif">{p.t}</h3>
+              <p class="p-text">{p.d}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .principles {
+    padding-block: clamp(4rem, 10vw, 8rem);
+  }
+  .principles-layout {
+    display: grid;
+    grid-template-columns: 0.7fr 1fr;
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: start;
+  }
+
+  .principles-aside {
+    position: sticky;
+    top: clamp(6rem, 14vh, 9rem);
+  }
+  .principles-aside h2 {
+    margin-top: 0.9rem;
+  }
+  .principles-counter {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--c-accent);
+  }
+  .principles-counter .sep,
+  .principles-counter .total {
+    color: var(--c-ink-soft);
+    font-size: 0.5em;
+  }
+
+  .principles-list {
+    list-style: none;
+  }
+  .principle {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.4rem);
+    padding: clamp(1.8rem, 3.4vw, 2.8rem) 0;
+    border-top: 1px solid var(--c-line);
+    opacity: 0.38;
+    transition:
+      opacity 0.5s var(--ease),
+      transform 0.5s var(--ease);
+  }
+  .principle:last-child {
+    border-bottom: 1px solid var(--c-line);
+  }
+  .principle.is-active {
+    opacity: 1;
+  }
+  .p-num {
+    flex-shrink: 0;
+    width: 2.6rem;
+    font-size: 0.95rem;
+    color: var(--c-accent);
+    padding-top: 0.4rem;
+  }
+  .p-title {
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.1;
+    transition: color 0.4s var(--ease);
+  }
+  .p-text {
+    margin-top: 0.7rem;
+    max-width: 46ch;
+    color: var(--c-ink-soft);
+    font-size: 0.98rem;
+    line-height: 1.55;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-height 0.55s var(--ease),
+      opacity 0.5s var(--ease),
+      margin-top 0.55s var(--ease);
+  }
+  .principle.is-active .p-text {
+    max-height: 8rem;
+    opacity: 1;
+  }
+
+  @media (max-width: 860px) {
+    .principles-layout {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .principles-aside {
+      position: static;
+    }
+    /* на мобильном раскрываем все описания */
+    .principle {
+      opacity: 1;
+    }
+    .p-text {
+      max-height: 8rem;
+      opacity: 1;
+      margin-top: 0.7rem;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initPrinciples() {
+    const section = document.querySelector('[data-principles]');
+    if (!section) return;
+    const items = Array.from(section.querySelectorAll<HTMLElement>('[data-principle]'));
+    const counter = section.querySelector('[data-counter]');
+    if (!items.length) return;
+
+    const isMobile = window.matchMedia('(max-width: 860px)').matches;
+    if (isMobile || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const setActive = (idx: number) => {
+      items.forEach((el, i) => el.classList.toggle('is-active', i === idx));
+      if (counter) counter.textContent = String(idx + 1).padStart(2, '0');
+    };
+    setActive(0);
+
+    items.forEach((el, i) => {
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 55%',
+        end: 'bottom 55%',
+        onToggle: (self) => {
+          if (self.isActive) setActive(i);
+        },
+      });
+    });
+  }
+
+  initPrinciples();
+  document.addEventListener('astro:page-load', initPrinciples);
+</script>

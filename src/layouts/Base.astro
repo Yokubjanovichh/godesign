@@ -1,0 +1,143 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource/cormorant/400.css';
+import '@fontsource/cormorant/400-italic.css';
+import '@fontsource/cormorant/500.css';
+import '@fontsource/cormorant/500-italic.css';
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Cursor from '../components/Cursor.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  heroTransparent?: boolean;
+}
+
+const {
+  title,
+  description = 'Ольга Горчакова — дизайн интерьера. Продуманные, функциональные и живые пространства, которые отражают вас. Москва и онлайн по России.',
+  image = '/og-default.jpg',
+  heroTransparent = false,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Устраняем FOUC для reveal-анимаций -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph / соцсети -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="GO design" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content="ru_RU" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'LocalBusiness',
+        '@id': Astro.site?.toString(),
+        name: 'GO design — Ольга Горчакова',
+        description:
+          'Дизайн интерьера в Москве. Продуманные, функциональные и живые пространства.',
+        image: ogImage.toString(),
+        url: Astro.site?.toString(),
+        email: 'ongorchakova@gmail.com',
+        telephone: '+7-903-716-86-14',
+        priceRange: 'от 4500 ₽/м²',
+        areaServed: ['Москва', 'Зеленоград', 'Россия'],
+        founder: { '@type': 'Person', name: 'Ольга Горчакова' },
+        knowsAbout: ['Дизайн интерьера', 'Декорирование', 'Авторский надзор'],
+      })}
+    />
+
+    <ClientRouter />
+    <slot name="head" />
+  </head>
+  <body>
+    <span id="top" aria-hidden="true"></span>
+    <Cursor />
+    <Header transparent={heroTransparent} />
+    <slot />
+    <Footer />
+
+    <script>
+      // Плавный инерционный скролл (Lenis) + синхронизация с GSAP ScrollTrigger
+      import Lenis from 'lenis';
+      import { gsap } from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      gsap.registerPlugin(ScrollTrigger);
+
+      const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let lenis: import('lenis').default | null = null;
+
+      if (!prefersReduce) {
+        lenis = new Lenis({
+          duration: 1.1,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => lenis!.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      // При переходах View Transitions — наверх и пересчёт триггеров
+      document.addEventListener('astro:after-swap', () => {
+        lenis?.scrollTo(0, { immediate: true });
+        ScrollTrigger.refresh();
+      });
+      document.addEventListener('astro:page-load', () => ScrollTrigger.refresh());
+    </script>
+
+    <script>
+      // Reveal при скролле — переинициализируется после View Transitions
+      function initReveal() {
+        const els = document.querySelectorAll('.reveal:not(.is-visible)');
+        if (!els.length || !('IntersectionObserver' in window)) {
+          els.forEach((el) => el.classList.add('is-visible'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+        );
+        els.forEach((el) => io.observe(el));
+      }
+
+      initReveal();
+      document.addEventListener('astro:page-load', initReveal);
+    </script>
+  </body>
+</html>

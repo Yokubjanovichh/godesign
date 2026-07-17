@@ -1,0 +1,273 @@
+---
+import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
+import { getOlgaPhotos } from '../data/projects';
+
+const photos = getOlgaPhotos();
+const portrait = photos[0];
+const secondary = photos.slice(1, 4);
+---
+
+<Base
+  title="Об авторе — Ольга Горчакова, дизайнер интерьера"
+  description="Ольга Горчакова — дизайнер-декоратор интерьера. Юридическое образование и Британская высшая школа дизайна. Продуманные и живые интерьеры."
+>
+  <section class="about-hero">
+    <div class="container about-hero-grid">
+      <div class="about-hero-text">
+        <p class="eyebrow reveal">Об авторе</p>
+        <h1 class="about-name reveal" data-delay="1">Ольга<br />Горчакова</h1>
+        <p class="about-role serif italic reveal" data-delay="2">
+          дизайнер-декоратор интерьера
+        </p>
+      </div>
+      <div class="about-portrait reveal" data-delay="1">
+        <div class="about-portrait-move" data-shot-img>
+          <Image
+            src={portrait}
+            alt="Ольга Горчакова — дизайнер интерьера"
+            widths={[520, 780, 1040]}
+            sizes="(max-width: 900px) 90vw, 46vw"
+            loading="eager"
+            class="about-portrait-img"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-story">
+    <div class="container about-story-grid">
+      <p class="eyebrow reveal">Путь</p>
+      <div class="about-story-body">
+        <p class="about-lead reveal" data-delay="1">
+          Мой профессиональный путь — это уникальное сочетание рационального и
+          творческого начал.
+        </p>
+        <p class="reveal" data-delay="1">
+          Первое высшее образование — юридическое, полученное в Московском
+          университете МВД РФ. Оно дало мне особый склад ума: дисциплину,
+          внимание к деталям, умение работать с документацией и предвидеть
+          риски. В дизайне эти навыки помогают выстраивать прозрачные отношения
+          с клиентами, грамотно составлять договоры и защищать интересы
+          заказчика на всех этапах.
+        </p>
+        <p class="reveal" data-delay="2">
+          Второе высшее образование — в Британской высшей школе дизайна.
+          Обучение там открыло мне мир современной эстетики, композиции, стиля и
+          работы с пространством на уровне мировых стандартов. Здесь я научилась
+          создавать не просто красивые интерьеры, а продуманные, функциональные
+          и актуальные решения.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ценности -->
+  <section class="about-values">
+    <div class="container">
+      <div class="values-grid">
+        <div class="value reveal">
+          <span class="value-num serif">01</span>
+          <h3>Рациональность</h3>
+          <p>Юридическая база — это дисциплина, договоры и защита ваших интересов на каждом этапе.</p>
+        </div>
+        <div class="value reveal" data-delay="1">
+          <span class="value-num serif">02</span>
+          <h3>Эстетика</h3>
+          <p>Британская школа дизайна — композиция, стиль и работа с пространством мирового уровня.</p>
+        </div>
+        <div class="value reveal" data-delay="2">
+          <span class="value-num serif">03</span>
+          <h3>Человечность</h3>
+          <p>Интерьер как отражение владельца — продуманный под реальные сценарии жизни.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Галерея портретов -->
+  {
+    secondary.length > 0 && (
+      <section class="about-gallery">
+        <div class="container about-gallery-grid">
+          {secondary.map((img, i) => (
+            <div class:list={['about-shot', i === 1 ? 'is-tall' : '']}>
+              <div class="about-shot-frame">
+                <div class="about-shot-move" data-shot-img>
+                  <Image
+                    src={img}
+                    alt={`Ольга Горчакова ${i + 2}`}
+                    widths={[420, 640, 820]}
+                    sizes="(max-width: 760px) 90vw, 32vw"
+                    class="about-shot-img"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .about-hero {
+    padding-top: clamp(8rem, 16vh, 11rem);
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+  }
+  .about-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.85fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .about-name {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 320;
+    line-height: 0.98;
+    margin-top: 1rem;
+  }
+  .about-role {
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    color: var(--c-accent);
+    margin-top: 1.2rem;
+  }
+  .about-portrait {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .about-portrait-move {
+    position: absolute;
+    inset: -8% 0;
+    will-change: transform;
+  }
+  .about-portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .about-story {
+    padding-block: clamp(3rem, 8vw, 7rem);
+  }
+  .about-story-grid {
+    display: grid;
+    grid-template-columns: 0.35fr 1fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+  .about-story-body {
+    max-width: 60ch;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    color: var(--c-ink-soft);
+  }
+  .about-lead {
+    font-family: var(--f-display);
+    font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+    font-weight: 330;
+    line-height: 1.3;
+    color: var(--c-ink);
+  }
+
+  .about-values {
+    padding-block: clamp(2rem, 5vw, 4rem);
+  }
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    border-top: 1px solid var(--c-line);
+    padding-top: clamp(2rem, 4vw, 3rem);
+  }
+  .value-num {
+    font-size: 1.2rem;
+    color: var(--c-accent);
+  }
+  .value h3 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 1rem 0 0.7rem;
+  }
+  .value p {
+    color: var(--c-ink-soft);
+    font-size: 0.98rem;
+  }
+
+  .about-gallery {
+    padding-block: clamp(3rem, 7vw, 6rem);
+  }
+  .about-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.2rem, 2.5vw, 2rem);
+    align-items: start;
+  }
+  .about-shot-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    aspect-ratio: 4 / 5;
+    background: var(--c-bg-warm);
+  }
+  .about-shot.is-tall {
+    margin-top: clamp(1rem, 4vw, 3rem);
+  }
+  .about-shot-move {
+    position: absolute;
+    inset: -8% 0;
+    will-change: transform;
+  }
+  .about-shot-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 860px) {
+    .about-hero-grid,
+    .about-story-grid {
+      grid-template-columns: 1fr;
+    }
+    .about-portrait {
+      max-width: 420px;
+    }
+    .values-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .about-gallery-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initAbout() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll<HTMLElement>('[data-shot-img]').forEach((img) => {
+      gsap.fromTo(
+        img,
+        { yPercent: -6 },
+        {
+          yPercent: 6,
+          ease: 'none',
+          scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true },
+        }
+      );
+    });
+  }
+
+  initAbout();
+  document.addEventListener('astro:page-load', initAbout);
+</script>

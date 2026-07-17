@@ -1,0 +1,281 @@
+---
+interface Props {
+  transparent?: boolean;
+}
+const { transparent = false } = Astro.props;
+
+const nav = [
+  { href: '/projects', label: 'Проекты' },
+  { href: '/about', label: 'Об авторе' },
+  { href: '/services', label: 'Услуги' },
+  { href: '/art', label: 'Арт-объекты' },
+];
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(href + '/');
+---
+
+<header
+  class:list={['site-header', { 'is-transparent': transparent }]}
+  id="site-header"
+>
+  <div class="container header-inner">
+    <a href="/" class="brand" aria-label="Ольга Горчакова — на главную">
+      <span class="brand-name serif">Ольга&nbsp;Горчакова</span>
+      <span class="brand-sub">дизайн интерьера</span>
+    </a>
+
+    <nav class="nav" aria-label="Основная навигация">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={['nav-link', { active: isActive(item.href) }]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <a href="/contact" class="header-cta">Обсудить проект</a>
+
+    <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <nav class="mobile-nav" aria-label="Мобильная навигация">
+      <a href="/" class="mobile-link serif">Главная</a>
+      {nav.map((item) => <a href={item.href} class="mobile-link serif">{item.label}</a>)}
+      <a href="/contact" class="mobile-link serif accent">Контакты</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    padding-block: 1.6rem;
+    transition:
+      padding 0.5s var(--ease),
+      background 0.5s var(--ease),
+      box-shadow 0.5s var(--ease);
+  }
+  .site-header.scrolled {
+    padding-block: 0.85rem;
+    background: color-mix(in srgb, var(--c-bg) 82%, transparent);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 1px 0 var(--c-line);
+  }
+
+  /* Прозрачный вариант — поверх полноэкранного героя */
+  .site-header.is-transparent:not(.scrolled) {
+    color: #f6efe4;
+  }
+  .site-header.is-transparent:not(.scrolled) .brand-sub,
+  .site-header.is-transparent:not(.scrolled) .nav-link {
+    color: rgba(246, 239, 228, 0.72);
+  }
+  .site-header.is-transparent:not(.scrolled) .nav-link:hover,
+  .site-header.is-transparent:not(.scrolled) .nav-link.active {
+    color: #f6efe4;
+  }
+  .site-header.is-transparent:not(.scrolled) .header-cta {
+    border-color: rgba(246, 239, 228, 0.45);
+  }
+  .site-header.is-transparent:not(.scrolled) .header-cta:hover {
+    background: #f6efe4;
+    color: var(--c-ink);
+    border-color: #f6efe4;
+  }
+  .site-header.is-transparent:not(.scrolled) .burger span {
+    background: #f6efe4;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  /* --- Логотип-подпись (вариант B) --- */
+  .brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+  }
+  .brand-name {
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.5rem;
+    letter-spacing: 0.01em;
+  }
+  .brand-sub {
+    font-family: var(--f-body);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+    margin-top: 0.35rem;
+    padding-left: 0.1rem;
+  }
+
+  /* --- Навигация --- */
+  .nav {
+    display: flex;
+    gap: 2.4rem;
+    margin-left: auto;
+    margin-right: 2.4rem;
+  }
+  .nav-link {
+    position: relative;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+    padding-block: 0.3rem;
+    transition: color 0.3s var(--ease);
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 1px;
+    background: var(--c-accent);
+    transition: width 0.35s var(--ease);
+  }
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--c-ink);
+  }
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  /* --- CTA --- */
+  .header-cta {
+    flex-shrink: 0;
+    border: 1px solid var(--c-ink);
+    border-radius: 100px;
+    padding: 0.7rem 1.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition:
+      background 0.35s var(--ease),
+      color 0.35s var(--ease);
+  }
+  .header-cta:hover {
+    background: var(--c-ink);
+    color: var(--c-paper);
+  }
+
+  /* --- Бургер --- */
+  .burger {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    width: 30px;
+    padding: 4px 0;
+  }
+  .burger span {
+    height: 1.5px;
+    width: 100%;
+    background: var(--c-ink);
+    transition: transform 0.35s var(--ease), opacity 0.3s;
+  }
+  .site-header.menu-open .burger span:first-child {
+    transform: translateY(3.75px) rotate(45deg);
+  }
+  .site-header.menu-open .burger span:last-child {
+    transform: translateY(-3.75px) rotate(-45deg);
+  }
+
+  /* --- Мобильное меню --- */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    background: var(--c-paper);
+    z-index: -1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-1rem);
+    transition:
+      opacity 0.5s var(--ease),
+      transform 0.5s var(--ease),
+      visibility 0.5s;
+    display: grid;
+    place-items: center;
+  }
+  .mobile-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-align: center;
+  }
+  .mobile-link {
+    font-size: clamp(2rem, 9vw, 3rem);
+    font-weight: 400;
+    padding-block: 0.4rem;
+  }
+
+  @media (max-width: 900px) {
+    .nav,
+    .header-cta {
+      display: none;
+    }
+    .burger {
+      display: flex;
+    }
+    .brand-name {
+      font-size: 1.3rem;
+    }
+  }
+</style>
+
+<script>
+  function initHeader() {
+    const header = document.getElementById('site-header');
+    const burger = document.getElementById('burger');
+    const menu = document.getElementById('mobile-menu');
+    if (!header) return;
+
+    const onScroll = () =>
+      header.classList.toggle('scrolled', window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    burger?.addEventListener('click', () => {
+      const open = menu?.classList.toggle('open');
+      header.classList.toggle('menu-open', open);
+      burger.setAttribute('aria-expanded', String(!!open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+
+    menu?.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => {
+        menu.classList.remove('open');
+        header.classList.remove('menu-open');
+        burger?.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      })
+    );
+  }
+
+  initHeader();
+  document.addEventListener('astro:page-load', initHeader);
+</script>

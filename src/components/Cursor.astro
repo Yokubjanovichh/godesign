@@ -1,0 +1,122 @@
+---
+// Кастомный курсор: следует за мышью, над проектами превращается в «Смотреть»
+---
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <span class="cursor-ring"></span>
+  <span class="cursor-label">Смотреть</span>
+</div>
+
+<style>
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9000;
+    pointer-events: none;
+    transform: translate3d(-50%, -50%, 0);
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+  }
+  .cursor-ring {
+    display: block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--c-accent);
+    transition:
+      width 0.4s var(--ease),
+      height 0.4s var(--ease),
+      background 0.4s var(--ease);
+  }
+  .cursor-label {
+    position: absolute;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-paper);
+    opacity: 0;
+    transform: scale(0.6);
+    transition:
+      opacity 0.35s var(--ease),
+      transform 0.35s var(--ease);
+  }
+
+  /* Над интерактивным проектом */
+  .cursor.is-view .cursor-ring {
+    width: 92px;
+    height: 92px;
+    background: var(--c-accent);
+  }
+  .cursor.is-view .cursor-label {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Над обычными ссылками — лёгкое увеличение */
+  .cursor.is-hover .cursor-ring {
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--c-accent);
+  }
+
+  /* Только для мыши */
+  @media (hover: none), (pointer: coarse) {
+    .cursor {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initCursor() {
+    const cursor = document.getElementById('cursor');
+    if (!cursor) return;
+    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let curX = mouseX;
+    let curY = mouseY;
+    let shown = false;
+    let raf = 0;
+
+    const onMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (!shown) {
+        shown = true;
+        cursor.style.opacity = '1';
+      }
+    };
+
+    const loop = () => {
+      curX += (mouseX - curX) * 0.18;
+      curY += (mouseY - curY) * 0.18;
+      cursor.style.transform = `translate3d(${curX}px, ${curY}px, 0) translate(-50%, -50%)`;
+      raf = requestAnimationFrame(loop);
+    };
+
+    // Делегирование: реагируем на data-cursor="view" и обычные ссылки
+    const onOver = (e: Event) => {
+      const t = (e.target as HTMLElement).closest('[data-cursor="view"], a, button');
+      cursor.classList.remove('is-view', 'is-hover');
+      if (!t) return;
+      if (t.matches('[data-cursor="view"]')) cursor.classList.add('is-view');
+      else cursor.classList.add('is-hover');
+    };
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    document.addEventListener('mouseover', onOver, { passive: true });
+    document.addEventListener('mouseleave', () => (cursor.style.opacity = '0'));
+    cancelAnimationFrame(raf);
+    loop();
+  }
+
+  initCursor();
+  document.addEventListener('astro:page-load', initCursor);
+</script>

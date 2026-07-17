@@ -1,0 +1,269 @@
+---
+import { Image } from 'astro:assets';
+import { getProjectImages } from '../../data/projects';
+
+// Атмосферный кадр для полноэкранного героя
+const heroImg = getProjectImages('prime-park')[0];
+---
+
+<section class="hero" data-hero>
+  <div class="hero-media" data-hero-clip>
+    <div class="hero-img-scale" data-hero-img>
+      <Image
+        src={heroImg}
+        alt="Интерьер квартиры Prime Park — проект Ольги Горчаковой"
+        widths={[1280, 1920, 2560]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="hero-img"
+      />
+    </div>
+    <div class="hero-veil"></div>
+    <div class="hero-grain"></div>
+  </div>
+
+  <div class="container hero-inner">
+    <p class="hero-eyebrow" data-hero-fade>
+      <span class="dot"></span>Дизайн интерьера — Москва
+    </p>
+
+    <h1 class="hero-title">
+      <span class="ln"><span class="wd" data-hero-word>Пространство</span></span>
+      <span class="ln"
+        ><span class="wd" data-hero-word>как</span>
+        <span class="wd serif italic accent" data-hero-word>отражение</span></span
+      >
+      <span class="ln"><span class="wd" data-hero-word>пути</span></span>
+    </h1>
+
+    <div class="hero-foot">
+      <p class="hero-lead" data-hero-fade>
+        Продуманные и живые интерьеры, в которых человек становится собой.
+      </p>
+      <a href="#manifesto" class="hero-scroll" data-hero-fade aria-label="Прокрутите вниз">
+        <span class="hero-scroll-track"><span class="hero-scroll-thumb"></span></span>
+        <span class="hero-scroll-label">Прокрутите</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    height: 100svh;
+    min-height: 40rem;
+    overflow: hidden;
+    color: #f6efe4;
+  }
+
+  /* --- Медиа --- */
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 0 0 0);
+  }
+  .hero-img-scale {
+    position: absolute;
+    inset: -2%;
+    will-change: transform;
+  }
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero-veil {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, rgba(18, 14, 10, 0.82) 0%, rgba(18, 14, 10, 0.22) 42%, rgba(18, 14, 10, 0.32) 100%),
+      linear-gradient(to right, rgba(18, 14, 10, 0.45), transparent 55%);
+  }
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* --- Контент --- */
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: clamp(2.5rem, 6vh, 4.5rem);
+    padding-top: 7rem;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: clamp(1.5rem, 3vw, 2.4rem);
+  }
+  .hero-eyebrow .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--c-accent);
+    box-shadow: 0 0 0 4px rgba(169, 106, 68, 0.25);
+  }
+
+  .hero-title {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-size: clamp(3rem, 10vw, 10rem);
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+  .hero-title .ln {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.04em;
+  }
+  .hero-title .wd {
+    display: inline-block;
+    will-change: transform;
+  }
+  .hero-title .accent {
+    font-weight: 400;
+    color: #d68a5f;
+  }
+
+  .hero-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    margin-top: clamp(2rem, 5vh, 3.5rem);
+  }
+  .hero-lead {
+    max-width: 34ch;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: rgba(246, 239, 228, 0.82);
+  }
+
+  /* --- Скролл-индикатор --- */
+  .hero-scroll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    flex-shrink: 0;
+  }
+  .hero-scroll-track {
+    width: 1px;
+    height: 54px;
+    background: rgba(246, 239, 228, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-scroll-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: #f6efe4;
+    animation: heroScroll 2.2s var(--ease) infinite;
+  }
+  @keyframes heroScroll {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(250%); }
+  }
+  .hero-scroll-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(246, 239, 228, 0.7);
+    writing-mode: vertical-rl;
+  }
+
+  @media (max-width: 760px) {
+    .hero-foot {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.6rem;
+    }
+    .hero-scroll {
+      flex-direction: row;
+      align-items: center;
+    }
+    .hero-scroll-track {
+      width: 40px;
+      height: 1px;
+    }
+    .hero-scroll-thumb {
+      width: 40%;
+      height: 100%;
+      animation: heroScrollH 2.2s var(--ease) infinite;
+    }
+    .hero-scroll-label {
+      writing-mode: horizontal-tb;
+    }
+    @keyframes heroScrollH {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(250%); }
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initHero() {
+    const hero = document.querySelector('[data-hero]');
+    if (!hero) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    // Вступительная кинематографичная анимация
+    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+    tl.set('[data-hero-clip]', { clipPath: 'inset(0 0 100% 0)' })
+      .set('[data-hero-word]', { yPercent: 118 })
+      .set('[data-hero-fade]', { autoAlpha: 0, y: 24 })
+      .to('[data-hero-clip]', { clipPath: 'inset(0 0 0% 0)', duration: 1.5, ease: 'expo.inOut' }, 0.1)
+      .from('[data-hero-img]', { scale: 1.45, duration: 2, ease: 'expo.out' }, 0.1)
+      .to('[data-hero-word]', { yPercent: 0, duration: 1.15, stagger: 0.09 }, 0.55)
+      .to('[data-hero-fade]', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 1.0);
+
+    // Медленный Ken Burns после входа
+    gsap.to('[data-hero-img]', {
+      scale: 1.12,
+      duration: 18,
+      ease: 'none',
+      delay: 2,
+    });
+
+    // Параллакс при скролле
+    gsap.to('[data-hero-img]', {
+      yPercent: 16,
+      ease: 'none',
+      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
+    });
+    gsap.to('.hero-inner', {
+      yPercent: -12,
+      autoAlpha: 0.4,
+      ease: 'none',
+      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
+    });
+  }
+
+  initHero();
+  document.addEventListener('astro:page-load', initHero);
+</script>

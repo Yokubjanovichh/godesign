@@ -1,0 +1,155 @@
+---
+import Base from '../layouts/Base.astro';
+
+const artworks = [
+  { name: 'Интерьерная металлизированная картина', price: 'от 30 000 ₽', type: 'Живопись' },
+  { name: 'Панно «Рябь на воде»', price: 'от 20 000 ₽', type: 'Панно' },
+  { name: 'Текстурная картина', price: 'от 15 000 ₽', type: 'Живопись' },
+  { name: 'Авторская керамика', price: 'по запросу', type: 'Керамика' },
+  { name: 'Интерьерная картина, печать', price: 'по запросу', type: 'Печать' },
+];
+---
+
+<Base
+  title="Арт-объекты — авторские работы | Ольга Горчакова"
+  description="Авторские арт-объекты Ольги Горчаковой: интерьерные картины, панно и керамика ручной работы для завершения пространства."
+>
+  <section class="art">
+    <div class="container">
+      <header class="art-head">
+        <p class="eyebrow reveal">Арт-объекты</p>
+        <h1 class="reveal" data-delay="1">Авторские<br />работы</h1>
+        <p class="art-sub reveal" data-delay="2">
+          Картины, панно и керамика ручной работы — финальный акцент, который
+          делает интерьер завершённым и по-настоящему вашим.
+        </p>
+      </header>
+
+      <ul class="art-list">
+        {
+          artworks.map((a, i) => (
+            <li class="art-item reveal" data-delay={String((i % 3) + 1)}>
+              <span class="art-index serif">{String(i + 1).padStart(2, '0')}</span>
+              <div class="art-body">
+                <h2 class="art-name serif">{a.name}</h2>
+                <span class="art-type">{a.type}</span>
+              </div>
+              <span class="art-price">{a.price}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="art-cta reveal">
+        <p>Хотите арт-объект под ваш интерьер?</p>
+        <a href="/contact" class="art-cta-link serif">Обсудить работу <span>→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .art {
+    padding-top: clamp(8rem, 16vh, 11rem);
+    padding-bottom: clamp(4rem, 9vw, 7rem);
+  }
+  .art-head {
+    max-width: 46ch;
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  .art-head h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    margin-top: 1rem;
+  }
+  .art-sub {
+    margin-top: 1.6rem;
+    font-size: 1.1rem;
+    color: var(--c-ink-soft);
+  }
+
+  .art-list {
+    list-style: none;
+    border-top: 1px solid var(--c-line);
+  }
+  .art-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.4rem);
+    padding: clamp(1.6rem, 3vw, 2.4rem) 0;
+    border-bottom: 1px solid var(--c-line);
+    transition: padding-left 0.4s var(--ease);
+  }
+  .art-item:hover {
+    padding-left: 1rem;
+  }
+  .art-index {
+    font-size: 0.95rem;
+    color: var(--c-accent);
+  }
+  .art-name {
+    font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+    font-weight: 400;
+    transition: color 0.3s var(--ease);
+  }
+  .art-item:hover .art-name {
+    color: var(--c-accent);
+  }
+  .art-type {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+  }
+  .art-price {
+    font-family: var(--f-display);
+    font-size: 1.3rem;
+    color: var(--c-ink);
+    white-space: nowrap;
+  }
+
+  .art-cta {
+    margin-top: clamp(3rem, 7vw, 5rem);
+    padding: clamp(2rem, 5vw, 3.5rem);
+    background: var(--c-bg-warm);
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .art-cta p {
+    font-size: 1.15rem;
+    color: var(--c-ink-soft);
+  }
+  .art-cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 340;
+    transition: color 0.35s var(--ease);
+  }
+  .art-cta-link span {
+    color: var(--c-accent);
+    transition: transform 0.35s var(--ease);
+  }
+  .art-cta-link:hover span {
+    transform: translateX(0.4rem);
+  }
+
+  @media (max-width: 620px) {
+    .art-item {
+      grid-template-columns: auto 1fr;
+      row-gap: 0.4rem;
+    }
+    .art-price {
+      grid-column: 2;
+      font-size: 1.1rem;
+      color: var(--c-accent);
+    }
+  }
+</style>

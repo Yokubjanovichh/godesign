@@ -1,0 +1,237 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Контакты — обсудить проект интерьера | Ольга Горчакова"
+  description="Свяжитесь с Ольгой Горчаковой, чтобы обсудить дизайн интерьера. Москва, Зеленоград и онлайн по России. Ответ в течение 1–2 рабочих дней."
+>
+  <section class="contact">
+    <div class="container contact-grid">
+      <!-- Левая колонка -->
+      <div class="contact-intro">
+        <p class="eyebrow reveal">Контакты</p>
+        <h1 class="reveal" data-delay="1">Один шаг<br />к дому <span class="serif italic accent">мечты</span></h1>
+        <p class="contact-lead reveal" data-delay="2">
+          Расскажите о вашем пространстве — и я свяжусь с вами в течение 1–2
+          рабочих дней.
+        </p>
+
+        <div class="contact-info reveal" data-delay="3">
+          <a href="mailto:ongorchakova@gmail.com" class="contact-line">
+            <span>E-mail</span>
+            <b>ongorchakova@gmail.com</b>
+          </a>
+          <a href="tel:+79037168614" class="contact-line">
+            <span>Телефон</span>
+            <b>+7 (903) 716-86-14</b>
+          </a>
+          <div class="contact-line">
+            <span>Мессенджеры</span>
+            <div class="contact-social">
+              <a href="https://t.me/" target="_blank" rel="noopener">Telegram</a>
+              <a href="https://wa.me/79037168614" target="_blank" rel="noopener">WhatsApp</a>
+              <a href="https://vk.com/" target="_blank" rel="noopener">VK</a>
+            </div>
+          </div>
+          <div class="contact-line">
+            <span>География</span>
+            <b>Москва · Зеленоград · онлайн по России</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- Форма -->
+      <div class="contact-form-wrap reveal" data-delay="2">
+        <!-- action подключим к Web3Forms/Formspree при деплое -->
+        <form class="contact-form" method="POST" data-contact-form>
+          <div class="field">
+            <label for="name">Имя</label>
+            <input id="name" name="name" type="text" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="contact">Телефон или e-mail</label>
+            <input id="contact" name="contact" type="text" required />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="type">Тип объекта</label>
+              <select id="type" name="type">
+                <option>Квартира</option>
+                <option>Дом</option>
+                <option>Офис / коммерция</option>
+                <option>Пока не определился</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="area">Площадь, м²</label>
+              <input id="area" name="area" type="number" min="1" inputmode="numeric" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="city">Город</label>
+            <input id="city" name="city" type="text" autocomplete="address-level2" />
+          </div>
+          <div class="field">
+            <label for="message">Сообщение</label>
+            <textarea id="message" name="message" rows="4" placeholder="Расскажите о проекте…"></textarea>
+          </div>
+          <button type="submit" class="form-submit">
+            Отправить заявку <span>→</span>
+          </button>
+          <p class="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact {
+    padding-top: clamp(8rem, 16vh, 11rem);
+    padding-bottom: clamp(4rem, 9vw, 7rem);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .contact-intro h1 {
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    margin-top: 1rem;
+    line-height: 1;
+  }
+  .contact-lead {
+    margin-top: 1.6rem;
+    font-size: 1.1rem;
+    color: var(--c-ink-soft);
+    max-width: 34ch;
+  }
+  .contact-info {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+  }
+  .contact-line {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--c-line);
+  }
+  .contact-line:last-child {
+    border-bottom: 1px solid var(--c-line);
+  }
+  .contact-line span {
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+  }
+  .contact-line b {
+    font-family: var(--f-display);
+    font-size: 1.2rem;
+    font-weight: 400;
+    transition: color 0.3s var(--ease);
+  }
+  a.contact-line:hover b {
+    color: var(--c-accent);
+  }
+  .contact-social {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 0.2rem;
+  }
+  .contact-social a {
+    font-size: 1rem;
+    transition: color 0.3s var(--ease);
+  }
+  .contact-social a:hover {
+    color: var(--c-accent);
+  }
+
+  /* Форма */
+  .contact-form-wrap {
+    background: var(--c-paper);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.6rem, 4vw, 2.8rem);
+  }
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .field label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    font-family: var(--f-body);
+    font-size: 1rem;
+    color: var(--c-ink);
+    background: var(--c-bg);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+    transition:
+      border-color 0.3s var(--ease),
+      box-shadow 0.3s var(--ease);
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 3px rgba(169, 106, 68, 0.12);
+  }
+  .field textarea {
+    resize: vertical;
+  }
+  .form-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+    padding: 1rem 1.6rem;
+    background: var(--c-ink);
+    color: var(--c-paper);
+    border-radius: 100px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition:
+      background 0.35s var(--ease),
+      gap 0.35s var(--ease);
+  }
+  .form-submit:hover {
+    background: var(--c-accent);
+    gap: 1rem;
+  }
+  .form-note {
+    font-size: 0.76rem;
+    color: var(--c-ink-soft);
+    text-align: center;
+  }
+
+  @media (max-width: 860px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,136 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/home/Hero.astro';
+import Manifesto from '../components/home/Manifesto.astro';
+import Principles from '../components/home/Principles.astro';
+import FeaturedProjects from '../components/home/FeaturedProjects.astro';
+import { Image } from 'astro:assets';
+import { getOlgaPhotos } from '../data/projects';
+
+const olgaPhoto = getOlgaPhotos()[0];
+---
+
+<Base title="GO design — дизайн интерьера в Москве | Ольга Горчакова" heroTransparent>
+  <Hero />
+
+  <Manifesto />
+
+  <Principles />
+
+  <!-- Избранные проекты -->
+  <FeaturedProjects />
+
+  <!-- Об авторе (превью) -->
+  <section class="about-preview">
+    <div class="container about-grid">
+      <div class="about-visual reveal">
+        <Image
+          src={olgaPhoto}
+          alt="Ольга Горчакова — дизайнер интерьера"
+          widths={[420, 640, 820]}
+          sizes="(max-width: 900px) 80vw, 40vw"
+          class="about-img"
+        />
+        <span class="about-badge">Об авторе</span>
+      </div>
+      <div class="about-text">
+        <p class="eyebrow reveal">Автор</p>
+        <h2 class="reveal" data-delay="1">Ольга Горчакова</h2>
+        <p class="about-role serif italic reveal" data-delay="1">
+          дизайнер-декоратор интерьера
+        </p>
+        <p class="reveal" data-delay="2">
+          Мой путь — уникальное сочетание рационального и творческого начал.
+          Первое образование — юридическое: дисциплина, внимание к деталям,
+          умение работать с документацией и предвидеть риски.
+        </p>
+        <p class="reveal" data-delay="3">
+          Второе — Британская высшая школа дизайна. Здесь я научилась создавать
+          не просто красивые интерьеры, а продуманные, функциональные и
+          актуальные решения на уровне мировых стандартов.
+        </p>
+        <a href="/about" class="text-link reveal" data-delay="3">
+          Подробнее об авторе <span>→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* --- Об авторе --- */
+  .about-preview {
+    padding-block: clamp(3rem, 7vw, 6rem);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 0.82fr 1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .about-visual {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .about-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .about-badge {
+    position: absolute;
+    left: -1px;
+    top: 2rem;
+    writing-mode: vertical-rl;
+    background: var(--c-accent);
+    color: var(--c-paper);
+    padding: 1rem 0.65rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .about-role {
+    color: var(--c-accent);
+    font-size: 1.4rem;
+    margin: 0.4rem 0 0;
+  }
+  .about-text h2 {
+    margin-top: 0.8rem;
+  }
+  .about-text p:not(.about-role) {
+    margin-top: 1.5rem;
+    max-width: 52ch;
+    color: var(--c-ink-soft);
+  }
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--c-accent);
+    padding-bottom: 0.2rem;
+    transition: gap 0.35s var(--ease);
+  }
+  .text-link span {
+    color: var(--c-accent);
+    transition: transform 0.35s var(--ease);
+  }
+  .text-link:hover span {
+    transform: translateX(0.4rem);
+  }
+
+  @media (max-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 2.4rem;
+    }
+    .about-visual {
+      max-width: 420px;
+    }
+  }
+</style>
