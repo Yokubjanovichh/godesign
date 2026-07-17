@@ -4,8 +4,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Реальный домен подставим при деплое (Cloudflare Pages)
-  site: 'https://go-design.pages.dev',
+  // Cloudflare Pages; заменим на ongorchakova-design.ru после подключения домена
+  site: 'https://godesign.pages.dev',
   integrations: [sitemap()],
   prefetch: {
     prefetchAll: true,
