@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { featuredProjects, getCover } from '../../data/projects';
+import { link } from '../../utils/link';
 ---
 
 <section class="featured" id="projects" data-featured>
@@ -10,14 +11,14 @@ import { featuredProjects, getCover } from '../../data/projects';
         <p class="eyebrow">Портфолио</p>
         <h2>Избранные<br />проекты</h2>
       </div>
-      <a href="/projects" class="section-link">Все проекты <span>→</span></a>
+      <a href={link('/projects')} class="section-link">Все проекты <span>→</span></a>
     </div>
 
     <div class="proj-grid">
       {
         featuredProjects.map((p, i) => (
           <a
-            href={`/projects/${p.slug}`}
+            href={link(`/projects/${p.slug}`)}
             class:list={['proj-card', `pos-${i}`]}
             data-cursor="view"
           >

@@ -6,6 +6,7 @@ import Principles from '../components/home/Principles.astro';
 import FeaturedProjects from '../components/home/FeaturedProjects.astro';
 import { Image } from 'astro:assets';
 import { getOlgaPhotos } from '../data/projects';
+import { link } from '../utils/link';
 
 const olgaPhoto = getOlgaPhotos()[0];
 ---
@@ -49,7 +50,7 @@ const olgaPhoto = getOlgaPhotos()[0];
           не просто красивые интерьеры, а продуманные, функциональные и
           актуальные решения на уровне мировых стандартов.
         </p>
-        <a href="/about" class="text-link reveal" data-delay="3">
+        <a href={link('/about')} class="text-link reveal" data-delay="3">
           Подробнее об авторе <span>→</span>
         </a>
       </div>

@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import { projects, getProjectImages, getCover } from '../../data/projects';
+import { link } from '../../utils/link';
 
 export function getStaticPaths() {
   return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
@@ -39,7 +40,7 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
       </div>
 
       <div class="container pj-hero-inner">
-        <a href="/projects" class="pj-back" data-hero-fade>← Все проекты</a>
+        <a href={link('/projects')} class="pj-back" data-hero-fade>← Все проекты</a>
         <div class="pj-hero-bottom">
           <div>
             <p class="eyebrow" data-hero-fade>{project.category}</p>
@@ -89,7 +90,7 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
     </section>
 
     <!-- Следующий проект -->
-    <a href={`/projects/${next.slug}`} class="pj-next" data-cursor="view">
+    <a href={link(`/projects/${next.slug}`)} class="pj-next" data-cursor="view">
       <div class="pj-next-media">
         <div class="pj-next-move" data-shot-img>
           <Image

@@ -1,4 +1,5 @@
 ---
+import { link } from '../utils/link';
 const year = new Date().getFullYear();
 ---
 
@@ -6,7 +7,7 @@ const year = new Date().getFullYear();
   <div class="container">
     <div class="footer-cta reveal">
       <p class="eyebrow">Один шаг к дому мечты</p>
-      <a href="/contact" class="footer-cta-link serif">
+      <a href={link('/contact')} class="footer-cta-link serif">
         Обсудить проект <span class="arrow">→</span>
       </a>
     </div>
@@ -22,10 +23,10 @@ const year = new Date().getFullYear();
 
       <nav class="footer-col" aria-label="Навигация в подвале">
         <h3>Навигация</h3>
-        <a href="/projects">Проекты</a>
-        <a href="/about">Об авторе</a>
-        <a href="/services">Услуги</a>
-        <a href="/art">Арт-объекты</a>
+        <a href={link('/projects')}>Проекты</a>
+        <a href={link('/about')}>Об авторе</a>
+        <a href={link('/services')}>Услуги</a>
+        <a href={link('/art')}>Арт-объекты</a>
       </nav>
 
       <div class="footer-col">

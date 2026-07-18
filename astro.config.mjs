@@ -4,8 +4,10 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Cloudflare Workers; заменим на ongorchakova-design.ru после подключения домена
-  site: 'https://godesign.yokubjanovich.workers.dev',
+  // Временный превью на GitHub Pages (в России открывается надёжнее Cloudflare);
+  // позже — переезд на российский хостинг / свой домен (тогда base снова '/')
+  site: 'https://yokubjanovichh.github.io',
+  base: '/godesign',
   integrations: [sitemap()],
   prefetch: {
     prefetchAll: true,

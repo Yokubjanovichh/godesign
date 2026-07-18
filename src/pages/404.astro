@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { link } from '../utils/link';
 ---
 
 <Base
@@ -17,8 +18,8 @@ import Base from '../layouts/Base.astro';
         по-прежнему на своих местах.
       </p>
       <div class="nf-actions reveal" data-delay="3">
-        <a href="/" class="nf-btn">На главную</a>
-        <a href="/projects" class="nf-link">Смотреть проекты <span>→</span></a>
+        <a href={link('/')} class="nf-btn">На главную</a>
+        <a href={link('/projects')} class="nf-link">Смотреть проекты <span>→</span></a>
       </div>
     </div>
   </section>

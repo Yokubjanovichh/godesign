@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { link } from '../utils/link';
 
 const artworks = [
   { name: 'Интерьерная металлизированная картина', price: 'от 30 000 ₽', type: 'Живопись' },
@@ -42,7 +43,7 @@ const artworks = [
 
       <div class="art-cta reveal">
         <p>Хотите арт-объект под ваш интерьер?</p>
-        <a href="/contact" class="art-cta-link serif">Обсудить работу <span>→</span></a>
+        <a href={link('/contact')} class="art-cta-link serif">Обсудить работу <span>→</span></a>
       </div>
     </div>
   </section>

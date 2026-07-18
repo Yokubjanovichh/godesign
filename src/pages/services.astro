@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { link } from '../utils/link';
 
 const tariffs = [
   {
@@ -82,7 +83,7 @@ const steps = [
                   <li>{p}</li>
                 ))}
               </ul>
-              <a href="/contact" class="tariff-cta">
+              <a href={link('/contact')} class="tariff-cta">
                 Обсудить <span>→</span>
               </a>
             </div>

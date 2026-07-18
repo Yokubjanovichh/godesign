@@ -1,4 +1,6 @@
 ---
+import { link } from '../utils/link';
+
 interface Props {
   transparent?: boolean;
 }
@@ -10,7 +12,9 @@ const nav = [
   { href: '/services', label: 'Услуги' },
   { href: '/art', label: 'Арт-объекты' },
 ];
-const path = Astro.url.pathname;
+const rawBase = import.meta.env.BASE_URL.replace(/\/+$/, '');
+let path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+if (rawBase && path.startsWith(rawBase)) path = path.slice(rawBase.length) || '/';
 const isActive = (href: string) => path === href || path.startsWith(href + '/');
 ---
 
@@ -19,7 +23,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
   id="site-header"
 >
   <div class="container header-inner">
-    <a href="/" class="brand">
+    <a href={link('/')} class="brand">
       <span class="brand-name serif">Ольга&nbsp;Горчакова</span>
       <span class="brand-sub">дизайн интерьера</span>
       <span class="visually-hidden">— на главную</span>
@@ -29,7 +33,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
       {
         nav.map((item) => (
           <a
-            href={item.href}
+            href={link(item.href)}
             class:list={['nav-link', { active: isActive(item.href) }]}
           >
             {item.label}
@@ -38,7 +42,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
       }
     </nav>
 
-    <a href="/contact" class="header-cta">Обсудить проект</a>
+    <a href={link('/contact')} class="header-cta">Обсудить проект</a>
 
     <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false">
       <span></span><span></span>
@@ -47,9 +51,9 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
 
   <div class="mobile-menu" id="mobile-menu">
     <nav class="mobile-nav" aria-label="Мобильная навигация">
-      <a href="/" class="mobile-link serif">Главная</a>
-      {nav.map((item) => <a href={item.href} class="mobile-link serif">{item.label}</a>)}
-      <a href="/contact" class="mobile-link serif accent">Контакты</a>
+      <a href={link('/')} class="mobile-link serif">Главная</a>
+      {nav.map((item) => <a href={link(item.href)} class="mobile-link serif">{item.label}</a>)}
+      <a href={link('/contact')} class="mobile-link serif accent">Контакты</a>
     </nav>
   </div>
 </header>

@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import { projects, getCover } from '../../data/projects';
+import { link } from '../../utils/link';
 ---
 
 <Base
@@ -22,7 +23,7 @@ import { projects, getCover } from '../../data/projects';
       <div class="projects-grid">
         {
           projects.map((p) => (
-            <a href={`/projects/${p.slug}`} class="pcard" data-cursor="view">
+            <a href={link(`/projects/${p.slug}`)} class="pcard" data-cursor="view">
               <div class="pcard-frame" data-shot-frame>
                 <div class="pcard-move" data-shot-img>
                   <Image
