@@ -106,13 +106,23 @@ const ogImage = new URL(image, Astro.site);
         gsap.ticker.lagSmoothing(0);
       }
 
+      // Жёсткий сброс прокрутки наверх (Lenis во время перехода может быть
+      // «заблокирован», поэтому force: true + нативный fallback)
+      const scrollToTop = () => {
+        if (location.hash) return; // не мешаем переходам к якорям (#manifesto и т.п.)
+        lenis?.scrollTo(0, { immediate: true, force: true });
+        window.scrollTo(0, 0);
+      };
+
       // Перед сменой страницы убиваем старые ScrollTrigger (иначе копятся)
       document.addEventListener('astro:before-swap', () => {
         ScrollTrigger.getAll().forEach((t) => t.kill());
       });
       // При переходах View Transitions — наверх и пересчёт триггеров
       document.addEventListener('astro:after-swap', () => {
-        lenis?.scrollTo(0, { immediate: true });
+        document.documentElement.classList.add('js');
+        scrollToTop();
+        requestAnimationFrame(scrollToTop); // повтор после пересчёта нового макета
         ScrollTrigger.refresh();
       });
       document.addEventListener('astro:page-load', () => ScrollTrigger.refresh());
