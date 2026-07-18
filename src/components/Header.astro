@@ -75,10 +75,30 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
   /* Прозрачный вариант — поверх полноэкранного героя */
   .site-header.is-transparent:not(.scrolled) {
     color: #f6efe4;
+    text-shadow:
+      0 1px 3px rgba(18, 14, 10, 0.6),
+      0 1px 22px rgba(18, 14, 10, 0.5);
+  }
+  /* Затемняющий градиент сверху — навигация читается над любым
+     (в т.ч. очень светлым) героем */
+  .site-header.is-transparent:not(.scrolled)::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 220px;
+    background: linear-gradient(
+      to bottom,
+      rgba(18, 14, 10, 0.72) 0%,
+      rgba(18, 14, 10, 0.6) 28%,
+      rgba(18, 14, 10, 0.22) 66%,
+      rgba(18, 14, 10, 0) 100%
+    );
+    pointer-events: none;
+    z-index: -1;
   }
   .site-header.is-transparent:not(.scrolled) .brand-sub,
   .site-header.is-transparent:not(.scrolled) .nav-link {
-    color: rgba(246, 239, 228, 0.72);
+    color: rgba(246, 239, 228, 0.9);
   }
   .site-header.is-transparent:not(.scrolled) .nav-link:hover,
   .site-header.is-transparent:not(.scrolled) .nav-link.active {
