@@ -29,7 +29,8 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
           <Image
             src={cover}
             alt={`${project.title} — ${project.category}`}
-            widths={[900, 1440, 2000, 2560]}
+            widths={[760, 1200, 1600]}
+            quality={72}
             sizes="100vw"
             loading="eager"
             fetchpriority="high"
@@ -78,7 +79,8 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
                 <Image
                   src={img}
                   alt={`${project.title} — фрагмент интерьера ${i + 2}`}
-                  widths={[560, 900, 1440, 1920]}
+                  widths={[520, 860, 1200]}
+                  quality={70}
                   sizes="(max-width: 760px) 92vw, (min-width: 1100px) 62vw, 80vw"
                   class="pj-shot-img"
                 />
@@ -96,7 +98,8 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
           <Image
             src={nextCover}
             alt={next.title}
-            widths={[900, 1440, 2000]}
+            widths={[760, 1200, 1600]}
+            quality={72}
             sizes="100vw"
             class="pj-next-img"
           />
