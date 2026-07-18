@@ -29,9 +29,10 @@ import Base from '../layouts/Base.astro';
           <div class="contact-line">
             <span>Мессенджеры</span>
             <div class="contact-social">
-              <a href="https://t.me/" target="_blank" rel="noopener">Telegram</a>
+              <a href="https://t.me/olgagorchackova" target="_blank" rel="noopener">Telegram</a>
               <a href="https://wa.me/79037168614" target="_blank" rel="noopener">WhatsApp</a>
-              <a href="https://vk.com/" target="_blank" rel="noopener">VK</a>
+              <a href="https://www.instagram.com/gorchakova_design/" target="_blank" rel="noopener">Instagram</a>
+              <a href="https://max.ru/join/WQkax0lz2QuQgVzJPDLR1jgZjruy-6wa-jizSKNZt1U" target="_blank" rel="noopener">Max</a>
             </div>
           </div>
           <div class="contact-line">
@@ -43,12 +44,8 @@ import Base from '../layouts/Base.astro';
 
       <!-- Форма -->
       <div class="contact-form-wrap reveal" data-delay="2">
-        <!-- action подключим к Web3Forms/Formspree при деплое -->
-        <!-- Web3Forms: вставьте свой ключ вместо YOUR_WEB3FORMS_ACCESS_KEY (web3forms.com — бесплатно) -->
-        <form class="contact-form" data-contact-form action="https://api.web3forms.com/submit" method="POST">
-          <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY" />
-          <input type="hidden" name="subject" value="Новая заявка с сайта GO design" />
-          <input type="hidden" name="from_name" value="GO design — сайт" />
+        <!-- Отправка через Cloudflare Worker (/api/contact) → Telegram-группа -->
+        <form class="contact-form" data-contact-form action="/api/contact" method="POST">
           <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display: none" aria-hidden="true" />
           <div class="field">
             <label for="name">Имя</label>
@@ -109,7 +106,7 @@ import Base from '../layouts/Base.astro';
       if (btn) btn.disabled = true;
 
       try {
-        const res = await fetch('https://api.web3forms.com/submit', {
+        const res = await fetch('/api/contact', {
           method: 'POST',
           body: data,
           headers: { Accept: 'application/json' },
