@@ -4,8 +4,9 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Surge.sh (статика, открывается в России; Netlify/Vercel/Cloudflare заблокированы)
-  site: 'https://gorchakova-design.surge.sh',
+  // Render Static Site (сборка на сервере Render, открывается в России;
+  // Netlify/Vercel/Cloudflare заблокированы, у Surge падает CLI-загрузка)
+  site: 'https://gorchakova-design.onrender.com',
   integrations: [sitemap()],
   prefetch: {
     prefetchAll: true,
