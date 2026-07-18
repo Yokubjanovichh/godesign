@@ -15,7 +15,7 @@ const accentWords = new Set(['пространство', 'под', 'себя.'])
           <span
             class:list={['mf-word', { 'mf-accent': accentWords.has(w.toLowerCase()) }]}
           >
-            {w}&nbsp;
+            {w}{' '}
           </span>
         ))
       }

@@ -136,6 +136,10 @@ const heroImg = getProjectImages('prime-park')[0];
     display: inline-block;
     will-change: transform;
   }
+  /* Пробел между словами в строке (compressHTML убирает пробелы между тегами) */
+  .hero-title .wd + .wd {
+    margin-left: 0.25em;
+  }
   .hero-title .accent {
     font-weight: 400;
     color: #d68a5f;
