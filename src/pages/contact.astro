@@ -93,7 +93,10 @@ import Base from '../layouts/Base.astro';
   function initContactForm() {
     const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
     const result = document.querySelector<HTMLElement>('[data-form-result]');
-    if (!form || !result) return;
+    // Защита от повторной привязки (initContactForm вызывается и напрямую,
+    // и на astro:page-load) — иначе форма отправлялась дважды
+    if (!form || !result || form.dataset.bound) return;
+    form.dataset.bound = '1';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
