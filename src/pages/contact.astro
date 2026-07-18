@@ -209,6 +209,7 @@ import Base from '../layouts/Base.astro';
     border: 1px solid var(--c-line);
     border-radius: var(--radius-lg);
     padding: clamp(1.6rem, 4vw, 2.8rem);
+    min-width: 0;
   }
   .contact-form {
     display: flex;
@@ -222,7 +223,7 @@ import Base from '../layouts/Base.astro';
   }
   .field-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1rem;
   }
   .field label {
@@ -241,6 +242,9 @@ import Base from '../layouts/Base.astro';
     border: 1px solid var(--c-line);
     border-radius: var(--radius);
     padding: 0.85rem 1rem;
+    /* Поля не должны распирать сетку на узких экранах */
+    width: 100%;
+    min-width: 0;
     transition:
       border-color 0.3s var(--ease),
       box-shadow 0.3s var(--ease);
