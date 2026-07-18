@@ -44,8 +44,8 @@ import Base from '../layouts/Base.astro';
 
       <!-- Форма -->
       <div class="contact-form-wrap reveal" data-delay="2">
-        <!-- Отправка через Cloudflare Worker (/api/contact) → Telegram-группа -->
-        <form class="contact-form" data-contact-form action="/api/contact" method="POST">
+        <!-- Статический сайт (Surge): форма шлётся напрямую в Telegram Bot API из JS -->
+        <form class="contact-form" data-contact-form method="POST">
           <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display: none" aria-hidden="true" />
           <div class="field">
             <label for="name">Имя</label>
@@ -92,6 +92,36 @@ import Base from '../layouts/Base.astro';
 <script>
   let toastTimer: ReturnType<typeof setTimeout>;
 
+  // Значения подставляются при сборке из .env (PUBLIC_*), в git не хранятся.
+  // Сайт статический (Surge) — серверной части нет, шлём напрямую в Telegram.
+  // Токен виден в JS: обязательно используйте отдельного бота для формы.
+  const TG_TOKEN = import.meta.env.PUBLIC_TG_TOKEN as string | undefined;
+  const TG_CHAT = import.meta.env.PUBLIC_TG_CHAT_ID as string | undefined;
+
+  const esc = (s: FormDataEntryValue | null) =>
+    String(s ?? '')
+      .trim()
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;') || '—';
+
+  async function sendToTelegram(chatId: string, text: string) {
+    // form-urlencoded — «простой» запрос, без CORS-preflight; api.telegram.org
+    // отдаёт Access-Control-Allow-Origin: *, поэтому ответ читается из браузера.
+    const body = new URLSearchParams({
+      chat_id: chatId,
+      text,
+      parse_mode: 'HTML',
+      disable_web_page_preview: 'true',
+    });
+    const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+    return res.json();
+  }
+
   function initContactForm() {
     const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
     const result = document.querySelector<HTMLElement>('[data-form-result]');
@@ -121,30 +151,47 @@ import Base from '../layouts/Base.astro';
       // Закрываем клавиатуру на телефоне, чтобы тост был виден
       (document.activeElement as HTMLElement | null)?.blur();
 
+      const fd = new FormData(form);
+      // Ловушка для ботов
+      if (fd.get('botcheck')) {
+        form.reset();
+        showToast('ok', 'Спасибо! Заявка отправлена.');
+        return;
+      }
+
       const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-      const data = new URLSearchParams(new FormData(form) as any);
+      const text = [
+        '🏠 <b>Новая заявка — GO design</b>',
+        '',
+        `👤 <b>Имя:</b> ${esc(fd.get('name'))}`,
+        `📞 <b>Контакт:</b> ${esc(fd.get('contact'))}`,
+        `🏢 <b>Тип объекта:</b> ${esc(fd.get('type'))}`,
+        `📐 <b>Площадь:</b> ${esc(fd.get('area'))} м²`,
+        `📍 <b>Город:</b> ${esc(fd.get('city'))}`,
+        `💬 <b>Сообщение:</b> ${esc(fd.get('message'))}`,
+      ].join('\n');
+
+      if (!TG_TOKEN || !TG_CHAT) {
+        showToast('err', 'Форма ещё настраивается. Напишите в Telegram или WhatsApp — ссылки слева.');
+        return;
+      }
 
       showToast('pending', 'Отправляем…');
       if (btn) btn.disabled = true;
-
       try {
-        const res = await fetch('/api/contact', {
-          method: 'POST',
-          body: data,
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Accept: 'application/json',
-          },
-        });
-        const json = await res.json();
-        if (json.success) {
+        let tg = await sendToTelegram(TG_CHAT, text);
+        // Группа превратилась в супергруппу → новый id, повторяем отправку
+        if (!tg.ok && tg.parameters?.migrate_to_chat_id) {
+          tg = await sendToTelegram(String(tg.parameters.migrate_to_chat_id), text);
+        }
+        if (tg.ok) {
           form.reset();
           showToast('ok', 'Спасибо! Заявка отправлена — свяжусь с вами в течение 1–2 рабочих дней.');
         } else {
-          showToast('err', 'Не удалось отправить. Напишите на ongorchakova@gmail.com или в мессенджер.');
+          showToast('err', 'Не удалось отправить. Напишите в Telegram/WhatsApp или на e-mail.');
         }
       } catch {
-        showToast('err', 'Ошибка сети. Напишите на ongorchakova@gmail.com или в мессенджер.');
+        showToast('err', 'Ошибка сети. Напишите в Telegram/WhatsApp или на e-mail.');
       } finally {
         if (btn) btn.disabled = false;
       }
