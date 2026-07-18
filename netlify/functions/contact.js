@@ -17,6 +17,19 @@ const json = (data, statusCode = 200) => ({
   body: JSON.stringify(data),
 });
 
+function sendTelegram(token, chatId, text) {
+  return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text,
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+    }),
+  }).then((r) => r.json());
+}
+
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
     return json({ success: false, message: 'Method not allowed' }, 405);
@@ -48,17 +61,18 @@ export async function handler(event) {
       `💬 <b>Сообщение:</b> ${esc(form.get('message'))}`,
     ].join('\n');
 
-    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true,
-      }),
-    });
-    const tg = await res.json();
+    let tg = await sendTelegram(token, chatId, text);
+
+    // Группа была преобразована в супергруппу → id изменился. Telegram
+    // возвращает новый id в parameters.migrate_to_chat_id — повторяем отправку.
+    if (!tg.ok && tg.parameters && tg.parameters.migrate_to_chat_id) {
+      const newId = tg.parameters.migrate_to_chat_id;
+      // Виден в логах функции (Netlify → Functions → contact) — можно
+      // прописать это значение в TELEGRAM_CHAT_ID, чтобы убрать лишний запрос.
+      console.log('Telegram chat migrated to supergroup id:', newId);
+      tg = await sendTelegram(token, newId, text);
+    }
+
     if (!tg.ok) {
       return json({ success: false, message: tg.description || 'Ошибка Telegram' }, 502);
     }
