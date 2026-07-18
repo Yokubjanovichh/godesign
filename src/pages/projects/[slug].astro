@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { Image } from 'astro:assets';
-import { projects, getProjectImages } from '../../data/projects';
+import { projects, getProjectImages, getCover } from '../../data/projects';
 
 export function getStaticPaths() {
   return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
@@ -9,12 +9,12 @@ export function getStaticPaths() {
 
 const { project } = Astro.props;
 const images = getProjectImages(project.slug);
-const cover = images[0];
-const gallery = images.slice(1);
+const cover = getCover(project.slug);
+const gallery = images.filter((img) => img !== cover);
 
 const idx = projects.findIndex((p) => p.slug === project.slug);
 const next = projects[(idx + 1) % projects.length];
-const nextCover = getProjectImages(next.slug)[0];
+const nextCover = getCover(next.slug);
 
 const title = `${project.title} — ${project.category}, ${project.area} м² | GO design`;
 ---

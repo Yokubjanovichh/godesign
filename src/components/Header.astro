@@ -96,6 +96,15 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     background: #f6efe4;
   }
 
+  /* При открытом меню убираем backdrop-filter и фон шапки: filter создаёт
+     containing block для position: fixed, из-за чего меню «съезжало» к шапке
+     при прокрутке. Меню само перекрывает контент. */
+  .site-header.menu-open {
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+
   /* Открытое мобильное меню — светлый фон: логотип и крестик тёмные */
   .site-header.is-transparent.menu-open {
     color: var(--c-ink);
@@ -282,20 +291,23 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true, signal });
 
-    burger?.addEventListener('click', () => {
-      const open = menu?.classList.toggle('open');
-      header.classList.toggle('menu-open', !!open);
-      burger.setAttribute('aria-expanded', String(!!open));
+    const setMenu = (open: boolean) => {
+      menu?.classList.toggle('open', open);
+      header.classList.toggle('menu-open', open);
+      burger?.setAttribute('aria-expanded', String(open));
       document.body.style.overflow = open ? 'hidden' : '';
+      // Останавливаем инерционный скролл, чтобы контент не ехал под меню
+      const lenis = (window as any).__lenis;
+      if (open) lenis?.stop();
+      else lenis?.start();
+    };
+
+    burger?.addEventListener('click', () => {
+      setMenu(!menu?.classList.contains('open'));
     }, { signal });
 
     menu?.querySelectorAll('a').forEach((a) =>
-      a.addEventListener('click', () => {
-        menu.classList.remove('open');
-        header.classList.remove('menu-open');
-        burger?.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      }, { signal })
+      a.addEventListener('click', () => setMenu(false), { signal })
     );
   }
 

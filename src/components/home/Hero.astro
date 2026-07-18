@@ -130,7 +130,10 @@ const heroImg = getProjectImages('prime-park')[0];
   .hero-title .ln {
     display: block;
     overflow: hidden;
-    padding-bottom: 0.04em;
+    /* Расширяем клип вниз, чтобы не срезались хвосты букв (у, р),
+       и компенсируем отрицательным margin — межстрочность прежняя */
+    padding-bottom: 0.2em;
+    margin-bottom: -0.16em;
   }
   .hero-title .wd {
     display: inline-block;

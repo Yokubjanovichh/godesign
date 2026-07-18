@@ -125,19 +125,53 @@ const principles = [
   @media (max-width: 860px) {
     .principles-layout {
       grid-template-columns: 1fr;
-      gap: 2.5rem;
+      gap: 1.8rem;
     }
     .principles-aside {
       position: static;
     }
-    /* на мобильном раскрываем все описания */
+    /* Счётчик — это подсказка для скролла на десктопе, на мобильном не нужен */
+    .principles-counter {
+      display: none;
+    }
+
+    /* Премиальные карточки вместо плоского списка */
+    .principles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
     .principle {
+      display: block;
       opacity: 1;
+      border: none;
+      border-radius: var(--radius-lg);
+      background: var(--c-paper);
+      box-shadow: 0 10px 34px -24px rgba(33, 28, 23, 0.5);
+      padding: 1.5rem 1.4rem 1.6rem;
+    }
+    .principle:last-child {
+      border-bottom: none;
+    }
+    /* Крупная терракотовая цифра как акцент */
+    .p-num {
+      display: block;
+      width: auto;
+      padding-top: 0;
+      margin-bottom: 0.35rem;
+      font-size: 2.6rem;
+      font-style: italic;
+      font-weight: 500;
+      line-height: 0.9;
+      color: var(--c-accent);
+    }
+    .p-title {
+      font-size: 1.6rem;
     }
     .p-text {
-      max-height: 8rem;
+      max-height: none;
       opacity: 1;
-      margin-top: 0.7rem;
+      margin-top: 0.5rem;
     }
   }
 </style>
