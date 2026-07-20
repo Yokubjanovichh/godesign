@@ -1,9 +1,7 @@
 ---
 import { Image } from 'astro:assets';
-import { getProjectImages } from '../../data/projects';
-
-// Атмосферный кадр для полноэкранного героя
-const heroImg = getProjectImages('prime-park')[0];
+// Тёплый, светлый кадр для героя (по замечанию Ольги — теплее, меньше чёрного)
+import heroImg from '../../assets/projects/bakeevo/51.webp';
 ---
 
 <section class="hero" data-hero>
@@ -11,9 +9,9 @@ const heroImg = getProjectImages('prime-park')[0];
     <div class="hero-img-scale" data-hero-img>
       <Image
         src={heroImg}
-        alt="Интерьер квартиры Prime Park — проект Ольги Горчаковой"
-        widths={[960, 1440, 1920]}
-        quality={74}
+        alt="Тёплый интерьер загородного дома — проект Ольги Горчаковой"
+        widths={[960, 1440, 1600]}
+        quality={80}
         sizes="100vw"
         loading="eager"
         fetchpriority="high"
@@ -75,12 +73,13 @@ const heroImg = getProjectImages('prime-park')[0];
     height: 100%;
     object-fit: cover;
   }
+  /* Тёплая, более лёгкая вуаль — читаемость текста без «черноты» */
   .hero-veil {
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(to top, rgba(18, 14, 10, 0.82) 0%, rgba(18, 14, 10, 0.22) 42%, rgba(18, 14, 10, 0.32) 100%),
-      linear-gradient(to right, rgba(18, 14, 10, 0.45), transparent 55%);
+      linear-gradient(to top, rgba(36, 24, 14, 0.62) 0%, rgba(36, 24, 14, 0.18) 40%, rgba(36, 24, 14, 0.04) 72%, transparent 100%),
+      linear-gradient(to right, rgba(36, 24, 14, 0.3), transparent 50%);
   }
   .hero-grain {
     position: absolute;
@@ -101,6 +100,8 @@ const heroImg = getProjectImages('prime-park')[0];
     justify-content: flex-end;
     padding-bottom: clamp(2.5rem, 6vh, 4.5rem);
     padding-top: 7rem;
+    /* Мягкая тень — текст читается на светлом тёплом кадре без плотной вуали */
+    text-shadow: 0 1px 28px rgba(26, 16, 8, 0.42);
   }
   .hero-eyebrow {
     display: inline-flex;
@@ -123,8 +124,8 @@ const heroImg = getProjectImages('prime-park')[0];
   .hero-title {
     font-family: var(--f-display);
     font-weight: 300;
-    font-size: clamp(3rem, 10vw, 10rem);
-    line-height: 0.94;
+    font-size: clamp(2.5rem, 7.4vw, 7rem);
+    line-height: 0.96;
     letter-spacing: -0.03em;
     margin: 0;
   }
