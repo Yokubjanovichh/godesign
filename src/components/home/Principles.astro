@@ -122,7 +122,7 @@ const principles = [
     opacity: 1;
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1024px), (pointer: coarse) {
     .principles-layout {
       grid-template-columns: 1fr;
       gap: 1.8rem;
@@ -189,7 +189,7 @@ const principles = [
     if (!items.length) return;
     section.dataset.prReady = '1';
 
-    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+    const isMobile = window.matchMedia('(max-width: 1024px), (pointer: coarse)').matches;
     if (isMobile || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const setActive = (idx: number) => {

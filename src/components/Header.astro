@@ -281,7 +281,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     padding-block: 0.4rem;
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1024px), (pointer: coarse) {
     .nav,
     .header-cta {
       display: none;
@@ -292,6 +292,19 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     .brand-name {
       font-size: 1.3rem;
     }
+  }
+
+  /* Запасной сигнал: сенсорные устройства (in-app браузеры Telegram/Max иногда
+     рендерят широкий viewport) — всегда бургер-меню, без десктоп-навигации */
+  :global(html.is-touch) .nav,
+  :global(html.is-touch) .header-cta {
+    display: none;
+  }
+  :global(html.is-touch) .burger {
+    display: flex;
+  }
+  :global(html.is-touch) .brand-name {
+    font-size: 1.3rem;
   }
 </style>
 

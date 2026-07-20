@@ -39,9 +39,23 @@ const ogImage = new URL(image, Astro.site);
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Устраняем FOUC для reveal-анимаций -->
+    <!-- Устраняем FOUC для reveal-анимаций + помечаем сенсорные устройства.
+         In-app браузеры (Telegram, Max) иногда рендерят страницу с широким
+         viewport (>1024px) и показывают десктоп-вёрстку на телефоне. Класс
+         is-touch (по maxTouchPoints) — надёжный запасной сигнал к mobile. -->
     <script is:inline>
-      document.documentElement.classList.add('js');
+      (function () {
+        var de = document.documentElement;
+        de.classList.add('js');
+        try {
+          if (
+            navigator.maxTouchPoints > 0 ||
+            (window.matchMedia && matchMedia('(pointer: coarse)').matches) ||
+            'ontouchstart' in window
+          )
+            de.classList.add('is-touch');
+        } catch (e) {}
+      })();
     </script>
 
     <title>{title}</title>

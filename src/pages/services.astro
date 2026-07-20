@@ -148,9 +148,9 @@ const steps = [
       box-shadow 0.5s var(--ease);
   }
   .tariff.is-featured {
-    background: var(--c-ink);
+    background: var(--c-accent-deep);
     color: #f6efe4;
-    border-color: var(--c-ink);
+    border-color: var(--c-accent-deep);
   }
   .tariff:hover {
     transform: translateY(-4px);
@@ -182,7 +182,7 @@ const steps = [
     color: var(--c-accent);
   }
   .tariff.is-featured .tariff-price b {
-    color: #d68a5f;
+    color: #f3ddc8;
   }
   .tariff-price span {
     font-size: 0.9rem;
@@ -221,6 +221,10 @@ const steps = [
     height: 6px;
     border-radius: 50%;
     background: var(--c-accent);
+  }
+  /* На тёплой акцентной карточке точки-маркеры светлые (иначе сливаются) */
+  .tariff.is-featured .tariff-points li::before {
+    background: rgba(246, 239, 228, 0.85);
   }
   .tariff-cta {
     display: inline-flex;
@@ -287,7 +291,7 @@ const steps = [
     color: var(--c-ink-soft);
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1024px), (pointer: coarse) {
     .tariffs {
       grid-template-columns: 1fr;
     }
