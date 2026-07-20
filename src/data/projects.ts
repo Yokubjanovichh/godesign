@@ -8,8 +8,6 @@ export interface Project {
   category: 'Квартира' | 'Дом' | 'Коммерческий' | 'Усадьба';
   description: string;
   featured: boolean;
-  /** Имя файла обложки (если не задано — берётся первое фото). */
-  cover?: string;
 }
 
 /**
@@ -36,7 +34,6 @@ export const projects: Project[] = [
     description:
       'Большой семейный дом, где каждая зона продумана под сценарии жизни. Природные материалы, многослойный свет, простор.',
     featured: true,
-    cover: '08.webp',
   },
   {
     slug: 'tsaritsyno',
@@ -47,7 +44,6 @@ export const projects: Project[] = [
     description:
       'Квартира с характером: спокойная база и точные акценты. Свет и цвет ведут по пространству, как по истории.',
     featured: true,
-    cover: '12.webp',
   },
   {
     slug: 'yantarny-gorod',
@@ -58,7 +54,6 @@ export const projects: Project[] = [
     description:
       'Современная семейная квартира. Функциональные планировочные решения и мягкая, тёплая палитра.',
     featured: true,
-    cover: '02.webp',
   },
   {
     slug: 'edem',
@@ -128,24 +123,16 @@ const allImages = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true }
 );
 
-/** Все фото проекта в естественном порядке (без низкого разрешения). */
+/** Все фото проекта в порядке из папок Ольги (01.webp, 02.webp, …). */
 export function getProjectImages(slug: string): ImageMetadata[] {
   return Object.entries(allImages)
     .filter(([path]) => path.includes(`/projects/${slug}/`))
     .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
-    .map(([, mod]) => mod.default)
-    .filter((img) => img.width >= 1000); // отсекаем мелкие исходники (напр. bakeevo/01 — 720px)
+    .map(([, mod]) => mod.default);
 }
 
-/** Обложка проекта: заданная в data (cover) или первое фото. */
+/** Обложка проекта — первое фото (01.webp). */
 export function getCover(slug: string): ImageMetadata {
-  const project = projects.find((p) => p.slug === slug);
-  if (project?.cover) {
-    const match = Object.entries(allImages).find(
-      ([path]) => path.includes(`/projects/${slug}/`) && path.endsWith('/' + project.cover)
-    );
-    if (match) return match[1].default;
-  }
   return getProjectImages(slug)[0];
 }
 

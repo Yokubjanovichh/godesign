@@ -221,23 +221,22 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
     max-width: 26ch;
   }
 
-  /* --- Галерея (кадры в натуральных пропорциях, без обрезки) --- */
+  /* --- Галерея: кадры в натуральных пропорциях по центру, на белом фоне --- */
   .pj-gallery {
-    padding-bottom: clamp(3rem, 7vw, 6rem);
+    padding-block: clamp(3rem, 7vw, 6rem);
+    background: var(--c-paper);
   }
   .pj-gallery-grid {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: clamp(2rem, 5vw, 4.5rem);
   }
   .pj-shot.is-land {
-    width: min(72%, 1000px);
+    width: min(88%, 1120px);
   }
   .pj-shot.is-portrait {
-    width: min(46%, 560px);
-  }
-  .pj-shot:nth-child(even) {
-    align-self: flex-end;
+    width: min(56%, 640px);
   }
   .pj-shot-frame {
     position: relative;

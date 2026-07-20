@@ -16,10 +16,10 @@ import { link } from '../../utils/link';
 
     <div class="proj-grid">
       {
-        featuredProjects.map((p, i) => (
+        featuredProjects.map((p) => (
           <a
             href={link(`/projects/${p.slug}`)}
-            class:list={['proj-card', `pos-${i}`]}
+            class="proj-card"
             data-cursor="view"
           >
             <div class="proj-frame" data-proj-frame>
@@ -28,11 +28,10 @@ import { link } from '../../utils/link';
                   src={getCover(p.slug)}
                   alt={`${p.title} — ${p.category}, ${p.area} м²`}
                   widths={[440, 680, 900, 1160]}
-                  sizes="(max-width: 760px) 92vw, 46vw"
+                  sizes="(max-width: 1024px) 92vw, 46vw"
                   class="proj-img"
                 />
               </div>
-              <span class="proj-index serif">{String(i + 1).padStart(2, '0')}</span>
             </div>
             <div class="proj-info">
               <span class="proj-loc">
@@ -48,8 +47,10 @@ import { link } from '../../utils/link';
 </section>
 
 <style>
+  /* Светлая секция портфолио — плитки на белом фоне (по замечанию Ольги) */
   .featured {
     padding-block: clamp(4rem, 10vw, 8rem);
+    background: var(--c-paper);
   }
   .section-head {
     display: flex;
@@ -85,60 +86,35 @@ import { link } from '../../utils/link';
     transform: translateX(0.4rem);
   }
 
+  /* Ровная сетка одинаковых плиток */
   .proj-grid {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: clamp(1.4rem, 3vw, 2.6rem) clamp(1.2rem, 2.5vw, 2rem);
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(2rem, 4vw, 3.4rem) clamp(1.5rem, 3vw, 2.6rem);
   }
   .proj-card {
     display: block;
-    grid-column: span 6;
   }
-  .pos-0 { grid-column: span 7; }
-  .pos-1 { grid-column: span 5; margin-top: clamp(2rem, 6vw, 5rem); }
-  .pos-2 { grid-column: span 5; margin-top: clamp(1.5rem, 4vw, 3.5rem); }
-  .pos-3 { grid-column: span 7; }
-  .pos-4 { grid-column: span 6; }
-  .pos-5 { grid-column: span 6; }
-
   .proj-frame {
     position: relative;
     overflow: hidden;
     border-radius: var(--radius);
     background: var(--c-bg-warm);
-    aspect-ratio: 16 / 11;
-  }
-  .pos-1 .proj-frame,
-  .pos-2 .proj-frame {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 4 / 3;
   }
   .proj-img-move {
     position: absolute;
-    inset: -14% 0;
+    inset: -12% 0;
     will-change: transform;
   }
   .proj-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: saturate(0.96);
-    transition:
-      transform 1.2s var(--ease-out),
-      filter 0.6s var(--ease);
+    transition: transform 1.2s var(--ease-out);
   }
   .proj-card:hover .proj-img {
-    transform: scale(1.05);
-    filter: saturate(1.06);
-  }
-  .proj-index {
-    position: absolute;
-    top: 1.1rem;
-    left: 1.4rem;
-    z-index: 2;
-    font-size: 1.05rem;
-    color: #fff;
-    mix-blend-mode: difference;
-    letter-spacing: 0.05em;
+    transform: scale(1.04);
   }
 
   .proj-info {
@@ -154,7 +130,7 @@ import { link } from '../../utils/link';
     color: var(--c-ink-soft);
   }
   .proj-title {
-    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
     font-weight: 400;
     transition: color 0.3s var(--ease);
   }
@@ -163,15 +139,9 @@ import { link } from '../../utils/link';
   }
 
   @media (max-width: 1024px), (pointer: coarse) {
-    .proj-card,
-    .pos-0, .pos-1, .pos-2, .pos-3, .pos-4, .pos-5 {
-      grid-column: span 12;
-      margin-top: 0;
-    }
-    .proj-frame,
-    .pos-1 .proj-frame,
-    .pos-2 .proj-frame {
-      aspect-ratio: 4 / 3;
+    .proj-grid {
+      grid-template-columns: 1fr;
+      gap: clamp(1.8rem, 6vw, 2.6rem);
     }
   }
 </style>
@@ -191,11 +161,11 @@ import { link } from '../../utils/link';
     section.querySelectorAll<HTMLElement>('[data-proj-frame]').forEach((frame) => {
       gsap.fromTo(
         frame,
-        { clipPath: 'inset(14% 8% 14% 8% round 4px)' },
+        { clipPath: 'inset(10% 6% 10% 6% round 4px)' },
         {
           clipPath: 'inset(0% 0% 0% 0% round 4px)',
           ease: 'none',
-          scrollTrigger: { trigger: frame, start: 'top 90%', end: 'top 48%', scrub: 0.6 },
+          scrollTrigger: { trigger: frame, start: 'top 92%', end: 'top 55%', scrub: 0.6 },
         }
       );
     });
@@ -204,9 +174,9 @@ import { link } from '../../utils/link';
     section.querySelectorAll<HTMLElement>('[data-proj-img]').forEach((img) => {
       gsap.fromTo(
         img,
-        { yPercent: -8 },
+        { yPercent: -7 },
         {
-          yPercent: 8,
+          yPercent: 7,
           ease: 'none',
           scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true },
         }
