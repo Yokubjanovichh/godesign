@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
-// Тёплый, светлый кадр для героя (по замечанию Ольги — теплее, меньше чёрного)
-import heroImg from '../../assets/projects/bakeevo/51.webp';
+// Первый кадр проекта Prime Park (по прямой просьбе клиента для героя)
+import heroImg from '../../assets/projects/prime-park/01.webp';
 ---
 
 <section class="hero" data-hero>
@@ -9,7 +9,7 @@ import heroImg from '../../assets/projects/bakeevo/51.webp';
     <div class="hero-img-scale" data-hero-img>
       <Image
         src={heroImg}
-        alt="Тёплый интерьер загородного дома — проект Ольги Горчаковой"
+        alt="Интерьер квартиры Prime Park — проект Ольги Горчаковой"
         widths={[960, 1440, 1600]}
         quality={80}
         sizes="100vw"
