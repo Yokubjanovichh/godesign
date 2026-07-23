@@ -136,22 +136,21 @@ const secondary = photos.slice(1, 4);
   }
   .about-portrait {
     position: relative;
-    aspect-ratio: 4 / 5;
+    /* Натуральные пропорции кадра (2:3) — фигура целиком, ноги не обрезаются */
+    aspect-ratio: 2 / 3;
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow);
   }
   .about-portrait-move {
     position: absolute;
-    inset: -8% 0;
+    inset: 0;
     will-change: transform;
   }
   .about-portrait-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Кадрируем по верху — фигура сверху, ноги не обрезаются криво (по Ольге) */
-    object-position: center top;
   }
 
   .about-story {
@@ -215,7 +214,8 @@ const secondary = photos.slice(1, 4);
     position: relative;
     overflow: hidden;
     border-radius: var(--radius);
-    aspect-ratio: 4 / 5;
+    /* Натуральные пропорции (2:3) — фигура целиком, без обрезки ног */
+    aspect-ratio: 2 / 3;
     background: var(--c-bg-warm);
   }
   /* Три портрета на одном уровне (по замечанию Ольги) — без ступенчатого сдвига */
@@ -224,14 +224,13 @@ const secondary = photos.slice(1, 4);
   }
   .about-shot-move {
     position: absolute;
-    inset: -8% 0;
+    inset: 0;
     will-change: transform;
   }
   .about-shot-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center top;
   }
 
   @media (max-width: 1024px), (pointer: coarse) {
@@ -252,29 +251,5 @@ const secondary = photos.slice(1, 4);
   }
 </style>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  gsap.registerPlugin(ScrollTrigger);
-
-  function initAbout() {
-    const imgs = document.querySelectorAll<HTMLElement>('[data-shot-img]');
-    if (!imgs.length || imgs[0].dataset.pxReady) return;
-    imgs[0].dataset.pxReady = '1';
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    imgs.forEach((img) => {
-      gsap.fromTo(
-        img,
-        { yPercent: -6 },
-        {
-          yPercent: 6,
-          ease: 'none',
-          scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true },
-        }
-      );
-    });
-  }
-
-  initAbout();
-  document.addEventListener('astro:page-load', initAbout);
-</script>
+<!-- Параллакс убран: кадры показываются целиком (натуральные пропорции 2:3),
+     чтобы ноги не обрезались (по замечанию Ольги). -->
