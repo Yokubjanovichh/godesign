@@ -38,6 +38,7 @@ import { link } from '../../utils/link';
                 {p.location} · {p.area} м²
               </span>
               <h3 class="proj-title serif">{p.title}</h3>
+              <p class="proj-tagline">{p.tagline}</p>
             </div>
           </a>
         ))
@@ -100,7 +101,8 @@ import { link } from '../../utils/link';
     overflow: hidden;
     border-radius: var(--radius);
     background: var(--c-bg-warm);
-    aspect-ratio: 4 / 3;
+    /* Квадрат — как на сайте Ольги (заглавные кадры разной ориентации) */
+    aspect-ratio: 1 / 1;
   }
   .proj-img-move {
     position: absolute;
@@ -136,6 +138,13 @@ import { link } from '../../utils/link';
   }
   .proj-card:hover .proj-title {
     color: var(--c-accent);
+  }
+  .proj-tagline {
+    margin-top: 0.3rem;
+    max-width: 44ch;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--c-ink-soft);
   }
 
   @media (max-width: 1024px), (pointer: coarse) {

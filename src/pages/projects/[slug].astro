@@ -9,9 +9,9 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props;
-const images = getProjectImages(project.slug);
 const cover = getCover(project.slug);
-const gallery = images.filter((img) => img !== cover);
+// Все кадры из папки Ольги в её нумерации — хронологический порядок сохранён
+const gallery = getProjectImages(project.slug);
 
 const idx = projects.findIndex((p) => p.slug === project.slug);
 const next = projects[(idx + 1) % projects.length];
@@ -46,6 +46,7 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
           <div>
             <p class="eyebrow" data-hero-fade>{project.category}</p>
             <h1 class="pj-title" data-hero-fade>{project.title}</h1>
+            <p class="pj-tagline serif italic" data-hero-fade>{project.tagline}</p>
           </div>
           <ul class="pj-facts" data-hero-fade>
             <li><span>Площадь</span><b>{project.area} м²</b></li>
@@ -55,11 +56,35 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
       </div>
     </header>
 
-    <!-- Описание -->
+    <!-- Индивидуальный текст проекта (из презентации Ольги) -->
     <section class="pj-intro">
       <div class="container pj-intro-grid">
         <p class="eyebrow reveal">О проекте</p>
-        <p class="pj-desc reveal" data-delay="1">{project.description}</p>
+        <div class="pj-story">
+          {
+            project.story.map((para, i) => (
+              <>
+                {para.heading && (
+                  <h2 class="pj-story-head serif reveal">{para.heading}</h2>
+                )}
+                <p
+                  class:list={['pj-story-p', 'reveal', i === 0 && !para.heading ? 'is-lead' : '']}
+                >
+                  {para.text}
+                </p>
+              </>
+            ))
+          }
+          {
+            project.credits && (
+              <ul class="pj-credits reveal">
+                {project.credits.map((c) => (
+                  <li>{c}</li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
       </div>
     </section>
 
@@ -68,28 +93,38 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
       <div class="container pj-gallery-grid">
         {
           gallery.map((img, i) => (
-            <figure
-              class:list={['pj-shot', img.height > img.width ? 'is-portrait' : 'is-land']}
+            <button
+              type="button"
+              class="pj-shot reveal"
+              data-delay={String((i % 3) + 1)}
+              data-lb={i}
+              aria-label={`Открыть фото ${i + 1} из ${gallery.length}`}
             >
-              <div
-                class="pj-shot-frame"
-                data-shot-frame
-                style={`aspect-ratio: ${img.width} / ${img.height}`}
-              >
-                <Image
-                  src={img}
-                  alt={`${project.title} — фрагмент интерьера ${i + 2}`}
-                  widths={[520, 860, 1200]}
-                  quality={70}
-                  sizes="(max-width: 760px) 92vw, (min-width: 1100px) 62vw, 80vw"
-                  class="pj-shot-img"
-                />
-              </div>
-            </figure>
+              <Image
+                src={img}
+                alt={`${project.title} — фото ${i + 1}`}
+                widths={[420, 700, 1100]}
+                quality={70}
+                sizes="(max-width: 760px) 46vw, 31vw"
+                loading="lazy"
+                class="pj-shot-img"
+              />
+            </button>
           ))
         }
       </div>
     </section>
+
+    <!-- Просмотр фото по одному (по просьбе Ольги: «кликабельные фото, открывались по одной») -->
+    <div class="lb" data-lb-root hidden>
+      <button type="button" class="lb-close" data-lb-close aria-label="Закрыть">✕</button>
+      <button type="button" class="lb-nav is-prev" data-lb-prev aria-label="Предыдущее фото">‹</button>
+      <figure class="lb-stage">
+        <img class="lb-img" data-lb-img alt="" />
+        <figcaption class="lb-count" data-lb-count />
+      </figure>
+      <button type="button" class="lb-nav is-next" data-lb-next aria-label="Следующее фото">›</button>
+    </div>
 
     <!-- Следующий проект -->
     <a href={link(`/projects/${next.slug}`)} class="pj-next" data-cursor="view">
@@ -181,6 +216,13 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
     letter-spacing: -0.02em;
     margin-top: 0.6rem;
   }
+  .pj-tagline {
+    max-width: 44ch;
+    margin-top: 0.9rem;
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    line-height: 1.45;
+    color: rgba(246, 239, 228, 0.88);
+  }
   .pj-facts {
     display: flex;
     gap: 2.6rem;
@@ -213,43 +255,170 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
     gap: clamp(1.5rem, 4vw, 3rem);
     align-items: start;
   }
-  .pj-desc {
+  .pj-story {
+    max-width: 62ch;
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+  .pj-story-p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--c-ink-soft);
+  }
+  /* Первый абзац — крупнее, как вводка */
+  .pj-story-p.is-lead {
     font-family: var(--f-display);
-    font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+    font-size: clamp(1.35rem, 2.6vw, 2rem);
     font-weight: 330;
-    line-height: 1.3;
-    max-width: 26ch;
+    line-height: 1.32;
+    color: var(--c-ink);
+  }
+  .pj-story-head {
+    font-family: var(--f-display);
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    font-weight: 400;
+    color: var(--c-accent);
+    margin-top: 0.9rem;
+  }
+  .pj-credits {
+    list-style: none;
+    margin-top: 1.2rem;
+    padding-top: 1.3rem;
+    border-top: 1px solid var(--c-line);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    color: var(--c-ink-soft);
   }
 
-  /* --- Галерея: кадры в натуральных пропорциях по центру, на белом фоне --- */
+  /* --- Галерея: ровная сетка кликабельных кадров (по просьбе Ольги) --- */
   .pj-gallery {
     padding-block: clamp(3rem, 7vw, 6rem);
     background: var(--c-paper);
   }
   .pj-gallery-grid {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: clamp(2rem, 5vw, 4.5rem);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.7rem, 1.5vw, 1.2rem);
   }
-  .pj-shot.is-land {
-    width: min(88%, 1120px);
-  }
-  .pj-shot.is-portrait {
-    width: min(56%, 640px);
-  }
-  .pj-shot-frame {
+  .pj-shot {
     position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
     overflow: hidden;
     border-radius: var(--radius);
     background: var(--c-bg-warm);
-    /* aspect-ratio задаётся инлайн из натуральных размеров кадра — без обрезки */
+    cursor: zoom-in;
+    aspect-ratio: 4 / 3;
+  }
+  .pj-shot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 16, 8, 0.14);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+  }
+  .pj-shot:hover::after,
+  .pj-shot:focus-visible::after {
+    opacity: 1;
   }
   .pj-shot-img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.9s var(--ease-out);
+  }
+  .pj-shot:hover .pj-shot-img {
+    transform: scale(1.05);
+  }
+
+  /* --- Просмотр фото по одному --- */
+  .lb {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(16, 12, 8, 0.94);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.35s var(--ease);
+  }
+  .lb[hidden] {
+    display: none;
+  }
+  .lb.is-open {
+    opacity: 1;
+  }
+  .lb-stage {
+    max-width: min(94vw, 1500px);
+    max-height: 88svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .lb-img {
+    max-width: 100%;
+    max-height: 82svh;
+    object-fit: contain;
+    border-radius: 3px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  }
+  .lb-count {
+    font-size: 0.74rem;
+    letter-spacing: 0.18em;
+    color: rgba(246, 239, 228, 0.62);
+  }
+  .lb-close,
+  .lb-nav {
+    position: absolute;
+    z-index: 2;
+    border: 0;
+    background: rgba(246, 239, 228, 0.1);
+    color: #f6efe4;
+    cursor: pointer;
+    border-radius: 50%;
+    transition:
+      background 0.3s var(--ease),
+      transform 0.3s var(--ease);
+  }
+  .lb-close:hover,
+  .lb-nav:hover {
+    background: rgba(246, 239, 228, 0.22);
+  }
+  .lb-close {
+    top: clamp(1rem, 3vh, 2rem);
+    right: clamp(1rem, 3vw, 2.4rem);
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+  .lb-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 54px;
+    font-size: 2rem;
+    line-height: 1;
+    padding-bottom: 0.25rem;
+  }
+  .lb-nav.is-prev {
+    left: clamp(0.6rem, 2.5vw, 2.4rem);
+  }
+  .lb-nav.is-next {
+    right: clamp(0.6rem, 2.5vw, 2.4rem);
+  }
+  .lb-nav:hover {
+    transform: translateY(-50%) scale(1.06);
   }
 
   /* --- Следующий проект --- */
@@ -314,15 +483,31 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
     .pj-intro-grid {
       grid-template-columns: 1fr;
     }
-    .pj-shot.is-land {
-      width: 100%;
-      align-self: stretch;
-    }
-    .pj-shot.is-portrait {
-      width: 84%;
+    .pj-gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
     .pj-facts {
       gap: 1.6rem;
+    }
+    .lb-nav {
+      width: 42px;
+      height: 42px;
+      font-size: 1.5rem;
+      top: auto;
+      bottom: clamp(1rem, 4svh, 2.4rem);
+      transform: none;
+    }
+    .lb-nav:hover {
+      transform: none;
+    }
+    .lb-nav.is-prev {
+      left: 22%;
+    }
+    .lb-nav.is-next {
+      right: 22%;
+    }
+    .lb-img {
+      max-height: 74svh;
     }
   }
 </style>
@@ -354,18 +539,8 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
       scrollTrigger: { trigger: '.pj-hero', start: 'top top', end: 'bottom top', scrub: true },
     });
 
-    // Появление кадров галереи — мягкое раскрытие clip-path (без обрезки кадра)
-    document.querySelectorAll<HTMLElement>('[data-shot-frame]').forEach((frame) => {
-      gsap.fromTo(
-        frame,
-        { clipPath: 'inset(5% 4% 5% 4% round 4px)' },
-        {
-          clipPath: 'inset(0% 0% 0% 0% round 4px)',
-          ease: 'none',
-          scrollTrigger: { trigger: frame, start: 'top 88%', end: 'top 52%', scrub: 0.7 },
-        }
-      );
-    });
+    // Плитки галереи появляются через общий механизм .reveal (IntersectionObserver
+    // в Base.astro) — он безопаснее ScrollTrigger, когда кадров 50+.
 
     // Параллакс изображения «следующего проекта»
     document.querySelectorAll<HTMLElement>('[data-shot-img]').forEach((img) => {
@@ -381,6 +556,78 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
     });
   }
 
+  // --- Просмотр фото по одному (лайтбокс) ---
+  function initLightbox() {
+    const root = document.querySelector<HTMLElement>('[data-lb-root]');
+    if (!root || root.dataset.lbReady) return;
+    root.dataset.lbReady = '1';
+
+    const frames = [...document.querySelectorAll<HTMLElement>('[data-lb]')];
+    if (!frames.length) return;
+    const view = root.querySelector<HTMLImageElement>('[data-lb-img]')!;
+    const count = root.querySelector<HTMLElement>('[data-lb-count]')!;
+    let i = 0;
+
+    /** Берём самый крупный вариант из srcset — без лишних сборочных файлов. */
+    function biggest(img: HTMLImageElement) {
+      const best = (img.srcset || '')
+        .split(',')
+        .map((s) => s.trim().split(/\s+/))
+        .map(([url, w]) => ({ url, w: parseInt(w || '0', 10) }))
+        .sort((a, b) => b.w - a.w)[0];
+      return best?.url || img.currentSrc || img.src;
+    }
+
+    function show(n: number) {
+      i = (n + frames.length) % frames.length;
+      const img = frames[i].querySelector('img')!;
+      view.src = biggest(img);
+      view.alt = img.alt;
+      count.textContent = `${i + 1} / ${frames.length}`;
+    }
+
+    function open(n: number) {
+      show(n);
+      root.hidden = false;
+      requestAnimationFrame(() => root.classList.add('is-open'));
+      document.documentElement.style.overflow = 'hidden';
+      (window as any).__lenis?.stop();
+    }
+
+    function close() {
+      root.classList.remove('is-open');
+      document.documentElement.style.overflow = '';
+      (window as any).__lenis?.start();
+      setTimeout(() => { root.hidden = true; }, 350);
+    }
+
+    frames.forEach((f, n) => f.addEventListener('click', () => open(n)));
+    root.querySelector('[data-lb-close]')!.addEventListener('click', close);
+    root.querySelector('[data-lb-prev]')!.addEventListener('click', (e) => { e.stopPropagation(); show(i - 1); });
+    root.querySelector('[data-lb-next]')!.addEventListener('click', (e) => { e.stopPropagation(); show(i + 1); });
+    // Клик по фону закрывает; по самому фото и кнопкам — нет
+    root.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (t.tagName !== 'IMG' && !t.closest('button')) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (root.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(i - 1);
+      if (e.key === 'ArrowRight') show(i + 1);
+    });
+
+    // Свайп на телефоне
+    let x0 = 0;
+    root.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    root.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 45) show(dx < 0 ? i + 1 : i - 1);
+    }, { passive: true });
+  }
+
   initProject();
-  document.addEventListener('astro:page-load', initProject);
+  initLightbox();
+  document.addEventListener('astro:page-load', () => { initProject(); initLightbox(); });
 </script>

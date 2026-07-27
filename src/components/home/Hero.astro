@@ -1,8 +1,8 @@
 ---
 import { Image } from 'astro:assets';
-// Тёплый кадр «Загородного семейного клуба» — ракурс на золотистую панель
-// (по просьбе Ольги: развернуть правее на панель, не на телевизор)
-import heroImg from '../../assets/projects/semeyny-klub/03.webp';
+// Тёплый кадр «Загородного семейного клуба», развёрнутый правее — на золотистую
+// панель; телевизор срезан (см. scripts/make-hero.mjs, просьба Ольги)
+import heroImg from '../../assets/hero/semeyny-panel.webp';
 ---
 
 <section class="hero" data-hero>
@@ -11,7 +11,7 @@ import heroImg from '../../assets/projects/semeyny-klub/03.webp';
       <Image
         src={heroImg}
         alt="Загородный семейный клуб — тёплый интерьер, проект Ольги Горчаковой"
-        widths={[960, 1440, 1600]}
+        widths={[960, 1280, 1560]}
         quality={80}
         sizes="100vw"
         loading="eager"
@@ -73,14 +73,24 @@ import heroImg from '../../assets/projects/semeyny-klub/03.webp';
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 42%;
   }
-  /* Тёплая, более лёгкая вуаль — читаемость текста без «черноты» */
+  /* Тёплая вуаль: плотнее слева-снизу, где лежит текст, и почти прозрачная
+     справа — заголовок больше не сливается со светлой панелью
+     (по замечанию Ольги «сливается цвет, поменять») */
   .hero-veil {
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(to top, rgba(36, 24, 14, 0.62) 0%, rgba(36, 24, 14, 0.18) 40%, rgba(36, 24, 14, 0.04) 72%, transparent 100%),
-      linear-gradient(to right, rgba(36, 24, 14, 0.3), transparent 50%);
+      linear-gradient(
+        100deg,
+        rgba(28, 18, 9, 0.74) 0%,
+        rgba(28, 18, 9, 0.52) 24%,
+        rgba(28, 18, 9, 0.22) 46%,
+        rgba(28, 18, 9, 0.05) 66%,
+        transparent 82%
+      ),
+      linear-gradient(to top, rgba(28, 18, 9, 0.58) 0%, rgba(28, 18, 9, 0.16) 42%, transparent 74%);
   }
   .hero-grain {
     position: absolute;
@@ -102,7 +112,9 @@ import heroImg from '../../assets/projects/semeyny-klub/03.webp';
     padding-bottom: clamp(2.5rem, 6vh, 4.5rem);
     padding-top: 7rem;
     /* Мягкая тень — текст читается на светлом тёплом кадре без плотной вуали */
-    text-shadow: 0 1px 28px rgba(26, 16, 8, 0.42);
+    text-shadow:
+      0 1px 3px rgba(26, 16, 8, 0.35),
+      0 2px 34px rgba(26, 16, 8, 0.5);
   }
   .hero-eyebrow {
     display: inline-flex;
