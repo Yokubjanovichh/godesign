@@ -1,13 +1,98 @@
 ---
-const principles = [
-  { t: 'Тёплые материалы', d: 'Натуральное дерево, камень, керамика, текстиль — тактильность, дарящая чувство «здесь спокойно».' },
-  { t: 'Цвет', d: 'Палитра под характер клиента. Цвет управляет настроением быстрее, чем сама планировка.' },
-  { t: 'Сценарии света', d: 'Общий, рабочий, акцентный, ночной — каждый сценарий под своё состояние и время суток.' },
-  { t: 'Климат', d: 'Температура, влажность, свежесть воздуха. Незаметный комфорт, который считываешь телом.' },
-  { t: 'Индивидуальная мебель', d: 'Мебель под реальные привычки, рост и сценарии жизни каждого члена семьи.' },
-  { t: 'Живые растения', d: 'Биологическая связь с природой. Пространство, которое дышит и меняется вместе с вами.' },
-  { t: 'Личные акценты', d: 'Место для памяти, историй и вещей, которые делают интерьер именно вашим.' },
-  { t: 'Ароматы', d: 'Обоняние — прямой канал к эмоции. Запах материалов и пространства, который успокаивает.' },
+/**
+ * «8 инструментов, которые делают ваше пространство местом силы» —
+ * тексты Ольги из презентации «ТЕКСТ с сайта» (слайды 13–19), целиком.
+ * По её просьбе (слайд 12): «клик под номером — и открывается текст».
+ */
+interface Tool {
+  t: string;
+  paras: string[];
+  how?: string;
+  howBlocks?: { h: string; text: string }[];
+  howOutro?: string;
+}
+
+const principles: Tool[] = [
+  {
+    t: 'Материалы',
+    paras: [
+      'Мы воспринимаем пространство не только глазами, но и кожей. Холодный кафель, гладкий пластик, металлические поверхности — они создают ощущение стерильности и отстранённости.',
+      'Натуральное дерево, мягкий текстиль, матовая керамика, природный камень — напротив, дарят чувство безопасности, уюта и «домашности».',
+    ],
+    how: 'Я включаю в проект материалы, которые хочется трогать. Шероховатая фактура дерева, ворс ковра, приятная на ощупь обивка дивана — эти незаметные тактильные ощущения складываются в общее чувство: «здесь мне хорошо и спокойно».',
+  },
+  {
+    t: 'Цвет',
+    paras: [
+      'Цвет — это самый быстрый способ повлиять на настроение. Он работает без слов, напрямую через нервную систему. Холодные оттенки (синий, серый, белый) успокаивают, но в избытке могут вызывать отстранённость. Тёплые (терракотовый, песочный, оливковый) — согревают и создают ощущение защищённости. Яркие акценты — заряжают энергией, но требуют дозирования.',
+    ],
+    how: 'Я подбираю цветовую палитру под характер клиента и сценарии жизни. Где нужно сосредоточиться — добавляю спокойные, нейтральные тона. Где хочется энергии и радости — ввожу акценты. Где важно расслабиться — использую мягкие, природные оттенки.',
+  },
+  {
+    t: 'Световые сценарии',
+    paras: [
+      'Одна люстра на потолке — это не освещение, это приговор. Мозг и глаза устают от монотонного верхнего света.',
+      'Правильное освещение — слоёное: общий свет, рабочее освещение, акцентное, декоративное. Каждый сценарий соответствует определённому занятию и состоянию.',
+    ],
+    how: 'Я проектирую свет под вашу жизнь. Яркий ровный свет — для утра и работы. Тёплый приглушённый — для вечернего отдыха. Подсветка картины или ниши — для настроения. Ночники на пути в туалет — чтобы не ослеплять себя и не нарушать сон.',
+  },
+  {
+    t: 'Комфортный климат',
+    paras: [
+      'Температура, влажность, свежесть воздуха — это то, что мы перестаём замечать, когда всё в порядке, и остро чувствуем, когда что-то не так. Духота, сквозняки, сухой воздух, холодный пол — всё это создаёт фоновый дискомфорт, который мы списываем на «усталость» или «погоду».',
+    ],
+    how: 'На этапе проектирования я продумываю систему вентиляции, расположение кондиционеров, тёплые полы, расположение радиаторов. Чтобы в доме было легко дышать, комфортно находиться в любое время года и не хотелось кутаться в плед, даже когда отопление уже выключили.',
+  },
+  {
+    t: 'Индивидуальная мебель под каждого члена семьи',
+    paras: [
+      'Дом — это место, где живут разные люди с разными привычками, ростом, возрастом и потребностями. И мебель не может быть «универсальной».',
+      'То, что удобно взрослому, может быть неудобно ребёнку. То, что нравится одному, может раздражать другого. Поэтому подхожу к выбору и проектированию мебели адресно.',
+    ],
+    howBlocks: [
+      {
+        h: 'Для взрослых',
+        text: 'Учитываю рост и физические особенности. Высота столешницы на кухне — чтобы не болела спина после готовки. Глубина сиденья дивана — чтобы ноги доставали до пола или было комфортно сидеть с вытянутыми ногами. Высота кровати — чтобы легко вставать утром и садиться вечером. Расположение розеток и выключателей — на уровне руки, а не в неудобном месте.',
+      },
+      {
+        h: 'Для детей',
+        text: 'Мебель растёт вместе с ребёнком. Проектирую пространство так, чтобы оно адаптировалось: регулируемые стулья и столы, кровати-трансформеры, системы хранения на разной высоте. Важно, чтобы ребёнок с раннего возраста мог сам дотянуться до своих вещей, убирать игрушки, чувствовать себя хозяином своей комнаты. А безопасность — превыше всего: закруглённые углы, устойчивые конструкции, экологичные материалы.',
+      },
+      {
+        h: 'Для пожилых членов семьи',
+        text: 'Если в доме живут бабушки и дедушки, продумываю безбарьерную среду. Широкие проходы, чтобы можно было пройти с тростью или ходунками. Пороги, сведённые к минимуму. Опоры и поручни в душевой и туалете, выполненные эстетично, а не «больнично». Сиденье в душе. Выключатели и розетки на доступной высоте. Хорошее ровное освещение без слепящих ламп.',
+      },
+      {
+        h: 'Для всех',
+        text: 'Зоны хранения проектирую под реальные привычки. Если муж коллекционирует винил — ему нужны специальные стеллажи. Если жена увлекается выпечкой — ей нужно удобное место для теста и хранения форм. Если ребёнок занимается спортом — место для формы, инвентаря и медалей.',
+      },
+    ],
+    howOutro: 'Мебель становится не просто красивой, а функциональной именно для вашей семьи.',
+  },
+  {
+    t: 'Живые растения',
+    paras: [
+      'Растения — это не просто декор. Они создают биологическую связь с природой, которой нам так не хватает в городских квартирах.',
+      'Они увлажняют воздух, очищают его, и главное — напоминают, что жизнь продолжается, растёт, меняется. Ухаживая за растениями, мы заботимся и о себе.',
+    ],
+    how: 'Заранее предусматриваются в проекте места для растений: где будет достаточно света, где можно разместить крупную кадку, где — подвесное кашпо, а где — группу маленьких горшков на подоконнике. Растения становятся не «дополнительной заботой», а органичной частью интерьера.',
+  },
+  {
+    t: 'Персональные акценты',
+    paras: [
+      'Интерьер, который похож на картинку из журнала, но не отражает вас, — это не ваш дом. Это красивая декорация, в которой трудно расслабиться.',
+      'Настоящий дом наполнен тем, что важно именно вам: семейные фотографии, книги, коллекции, вещи с историей, предметы, подаренные близкими.',
+    ],
+    how: 'Я оставляю в проекте пространство для вашего «я». Не захламляю каждую поверхность декором, но создаю места, где эти личные вещи будут выглядеть уместно, а не «мешать идеальной картинке». Чтобы гость, заходя к вам, понимал: здесь живёт человек со своей историей, а не «дизайнерский проект».',
+  },
+  {
+    t: 'Ароматы и природные запахи',
+    paras: [
+      'Запах — самый мощный проводник в эмоциональное состояние. Он работает быстрее цвета и света, напрямую обращаясь к лимбической системе — центру памяти и эмоций.',
+      'Запах свежего хлеба создаёт ощущение уюта, хвоя — успокаивает, цитрусы — бодрят. А неприятные или химические запахи могут вызывать тревогу даже там, где визуально всё идеально.',
+    ],
+    how: 'Я продумываю не только визуальный, но и ольфакторный комфорт пространства. Выбираю материалы, которые не имеют резкого химического запаха. Предусматриваю места для аромадиффузоров, свечей или букетов из сухоцветов. Важно, чтобы дом пах так, как хочется вам: свежестью, деревом, цветами или чем-то, что ассоциируется с безопасностью и покоем.',
+  },
 ];
 ---
 
@@ -16,6 +101,10 @@ const principles = [
     <aside class="principles-aside">
       <p class="eyebrow reveal">Подход</p>
       <h2 class="reveal" data-delay="1">Инструменты<br />места&nbsp;силы</h2>
+      <p class="principles-lead reveal" data-delay="2">
+        8 инструментов, которые делают ваше пространство местом силы.
+        Нажмите на пункт, чтобы прочитать.
+      </p>
       <div class="principles-counter serif reveal" data-delay="2">
         <span data-counter>01</span><span class="sep">/</span><span class="total">08</span>
       </div>
@@ -24,11 +113,44 @@ const principles = [
     <ol class="principles-list">
       {
         principles.map((p, i) => (
-          <li class="principle" data-principle data-index={i}>
-            <span class="p-num serif">{String(i + 1).padStart(2, '0')}</span>
-            <div class="p-body">
-              <h3 class="p-title serif">{p.t}</h3>
-              <p class="p-text">{p.d}</p>
+          <li class="principle" data-principle>
+            <button
+              type="button"
+              class="p-head"
+              data-principle-btn
+              aria-expanded={i === 0 ? 'true' : 'false'}
+              aria-controls={`tool-${i + 1}`}
+            >
+              <span class="p-num serif">{String(i + 1).padStart(2, '0')}</span>
+              <span class="p-title serif">{p.t}</span>
+              <span class="p-sign" aria-hidden="true" />
+            </button>
+
+            <div class="p-panel" id={`tool-${i + 1}`} data-principle-panel>
+              <div class="p-panel-inner">
+                {p.paras.map((t) => (
+                  <p class="p-text">{t}</p>
+                ))}
+                {p.how && (
+                  <p class="p-how">
+                    <b>Как это работает.</b> {p.how}
+                  </p>
+                )}
+                {p.howBlocks && (
+                  <>
+                    <p class="p-how-label"><b>Как это работает.</b></p>
+                    <dl class="p-how-list">
+                      {p.howBlocks.map((b) => (
+                        <>
+                          <dt>{b.h}</dt>
+                          <dd>{b.text}</dd>
+                        </>
+                      ))}
+                    </dl>
+                  </>
+                )}
+                {p.howOutro && <p class="p-text">{p.howOutro}</p>}
+              </div>
             </div>
           </li>
         ))
@@ -55,11 +177,18 @@ const principles = [
   .principles-aside h2 {
     margin-top: 0.9rem;
   }
+  .principles-lead {
+    margin-top: 1.4rem;
+    max-width: 34ch;
+    color: var(--c-ink-soft);
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
   .principles-counter {
     display: flex;
     align-items: baseline;
     gap: 0.3rem;
-    margin-top: clamp(2rem, 4vw, 3.5rem);
+    margin-top: clamp(1.6rem, 3vw, 2.6rem);
     font-size: clamp(3rem, 6vw, 5rem);
     font-weight: 300;
     line-height: 1;
@@ -75,51 +204,116 @@ const principles = [
     list-style: none;
   }
   .principle {
-    display: flex;
-    gap: clamp(1rem, 3vw, 2.4rem);
-    padding: clamp(1.8rem, 3.4vw, 2.8rem) 0;
     border-top: 1px solid var(--c-line);
-    opacity: 0.38;
-    transition:
-      opacity 0.5s var(--ease),
-      transform 0.5s var(--ease);
   }
   .principle:last-child {
     border-bottom: 1px solid var(--c-line);
   }
-  .principle.is-active {
-    opacity: 1;
+
+  /* Заголовок-кнопка: клик открывает текст (просьба Ольги) */
+  .p-head {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1rem, 3vw, 2.4rem);
+    padding: clamp(1.4rem, 2.8vw, 2.2rem) 0;
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
   }
   .p-num {
     flex-shrink: 0;
     width: 2.6rem;
     font-size: 0.95rem;
     color: var(--c-accent);
-    padding-top: 0.4rem;
+    padding-top: 0.45rem;
   }
   .p-title {
-    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    flex: 1;
+    font-size: clamp(1.35rem, 2.6vw, 2.1rem);
     font-weight: 400;
-    line-height: 1.1;
-    transition: color 0.4s var(--ease);
+    line-height: 1.15;
+    transition: color 0.35s var(--ease);
   }
-  .p-text {
-    margin-top: 0.7rem;
-    max-width: 46ch;
+  .p-head:hover .p-title,
+  .p-head[aria-expanded='true'] .p-title {
+    color: var(--c-accent);
+  }
+  /* Знак «+» → «−» */
+  .p-sign {
+    position: relative;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 0.6rem;
+  }
+  .p-sign::before,
+  .p-sign::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 1px;
+    background: var(--c-accent);
+    transition: transform 0.4s var(--ease);
+  }
+  .p-sign::after {
+    transform: rotate(90deg);
+  }
+  .p-head[aria-expanded='true'] .p-sign::after {
+    transform: rotate(0deg);
+  }
+
+  /* Раскрытие любой высоты — без магических max-height */
+  .p-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.5s var(--ease);
+  }
+  .p-head[aria-expanded='true'] + .p-panel {
+    grid-template-rows: 1fr;
+  }
+  .p-panel-inner {
+    overflow: hidden;
+  }
+  .p-panel-inner > *:first-child {
+    padding-top: 0.2rem;
+  }
+  .p-panel-inner > *:last-child {
+    padding-bottom: clamp(1.4rem, 3vw, 2.2rem);
+  }
+  .p-text,
+  .p-how,
+  .p-how-label,
+  .p-how-list {
+    max-width: 58ch;
+    margin-left: calc(2.6rem + clamp(1rem, 3vw, 2.4rem));
     color: var(--c-ink-soft);
     font-size: 0.98rem;
-    line-height: 1.55;
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition:
-      max-height 0.55s var(--ease),
-      opacity 0.5s var(--ease),
-      margin-top 0.55s var(--ease);
+    line-height: 1.62;
   }
-  .principle.is-active .p-text {
-    max-height: 8rem;
-    opacity: 1;
+  .p-text + .p-text,
+  .p-how,
+  .p-how-label {
+    margin-top: 0.9rem;
+  }
+  .p-how b,
+  .p-how-label b {
+    color: var(--c-ink);
+    font-weight: 600;
+  }
+  .p-how-list {
+    margin-top: 0.7rem;
+  }
+  .p-how-list dt {
+    margin-top: 0.9rem;
+    color: var(--c-accent);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .p-how-list dd {
+    margin-top: 0.25rem;
   }
 
   @media (max-width: 1024px), (pointer: coarse) {
@@ -130,82 +324,42 @@ const principles = [
     .principles-aside {
       position: static;
     }
-    /* Счётчик — это подсказка для скролла на десктопе, на мобильном не нужен */
     .principles-counter {
       display: none;
     }
-
-    /* Премиальные карточки вместо плоского списка */
-    .principles-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-    }
-    .principle {
-      display: block;
-      opacity: 1;
-      border: none;
-      border-radius: var(--radius-lg);
-      background: var(--c-paper);
-      box-shadow: 0 10px 34px -24px rgba(33, 28, 23, 0.5);
-      padding: 1.5rem 1.4rem 1.6rem;
-    }
-    .principle:last-child {
-      border-bottom: none;
-    }
-    /* Крупная терракотовая цифра как акцент */
     .p-num {
-      display: block;
-      width: auto;
-      padding-top: 0;
-      margin-bottom: 0.35rem;
-      font-size: 2.6rem;
-      font-style: italic;
-      font-weight: 500;
-      line-height: 0.9;
-      color: var(--c-accent);
+      width: 2rem;
+      font-size: 0.85rem;
     }
     .p-title {
-      font-size: 1.6rem;
+      font-size: 1.25rem;
     }
-    .p-text {
-      max-height: none;
-      opacity: 1;
-      margin-top: 0.5rem;
+    .p-text,
+    .p-how,
+    .p-how-label,
+    .p-how-list {
+      margin-left: 0;
+      font-size: 0.95rem;
     }
   }
 </style>
 
 <script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  gsap.registerPlugin(ScrollTrigger);
-
   function initPrinciples() {
     const section = document.querySelector<HTMLElement>('[data-principles]');
     if (!section || section.dataset.prReady) return;
-    const items = Array.from(section.querySelectorAll<HTMLElement>('[data-principle]'));
-    const counter = section.querySelector('[data-counter]');
+    const items = Array.from(section.querySelectorAll<HTMLElement>('[data-principle-btn]'));
     if (!items.length) return;
     section.dataset.prReady = '1';
+    const counter = section.querySelector('[data-counter]');
 
-    const isMobile = window.matchMedia('(max-width: 1024px), (pointer: coarse)').matches;
-    if (isMobile || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const setActive = (idx: number) => {
-      items.forEach((el, i) => el.classList.toggle('is-active', i === idx));
-      if (counter) counter.textContent = String(idx + 1).padStart(2, '0');
-    };
-    setActive(0);
-
-    items.forEach((el, i) => {
-      ScrollTrigger.create({
-        trigger: el,
-        start: 'top 55%',
-        end: 'bottom 55%',
-        onToggle: (self) => {
-          if (self.isActive) setActive(i);
-        },
+    items.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        const open = btn.getAttribute('aria-expanded') === 'true';
+        // аккордеон: открыт всегда один пункт
+        items.forEach((b) => b.setAttribute('aria-expanded', 'false'));
+        btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+        if (!open && counter) counter.textContent = String(i + 1).padStart(2, '0');
       });
     });
   }

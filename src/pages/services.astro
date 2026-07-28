@@ -2,16 +2,17 @@
 import Base from '../layouts/Base.astro';
 import { link } from '../utils/link';
 
+/** Состав и цены — как на сайте Ольги (ongorchakova-design.ru/price). */
 const tariffs = [
   {
-    name: 'Консультация',
+    name: 'Консультации и встречи',
     price: 'от 3 000 ₽',
     unit: '',
     desc: 'Разбор вашего пространства, идеи и вектор. Точка старта перед проектом.',
     points: [
-      'Онлайн — 3 000 ₽ / час',
-      'Зеленоград — от 6 000 ₽',
-      'Москва — от 10 000 ₽',
+      'Онлайн — 3 000 ₽ за 1 час',
+      'Зеленоград — 6 000 ₽, от 3 часов',
+      'Москва — 10 000 ₽, от 3 часов',
     ],
   },
   {
@@ -22,19 +23,46 @@ const tariffs = [
     points: [
       'Планировочное решение',
       'Фотореалистичные визуализации',
-      'Полный пакет чертежей и спецификаций',
+      'Полный пакет чертежей и спецификаций для строителей',
     ],
     featured: true,
   },
   {
-    name: 'Надзор и комплектация',
+    name: 'Авторское сопровождение и комплектация',
     price: 'от 60 000 ₽',
     unit: '/ мес',
     desc: 'Контроль реализации и подбор всех материалов, мебели и декора. Проект воплощается точно по замыслу.',
+    groups: [
+      {
+        h: 'Авторский надзор',
+        items: [
+          'Выезды на объект по графику',
+          'Проверка соответствия работ чертежам',
+          'Контроль качества материалов и отделки',
+          'Оперативное решение вопросов на стройке',
+        ],
+      },
+      {
+        h: 'Комплектация',
+        items: [
+          'Подбор отделочных материалов',
+          'Заказ мебели по проекту',
+          'Закупка освещения и сантехники',
+          'Логистика и приёмка на объекте',
+          'Декор и текстиль',
+        ],
+      },
+    ],
+  },
+  {
+    name: 'Декорирование пространства',
+    price: 'по запросу',
+    unit: '',
     points: [
-      'Авторский надзор на объекте',
-      'Подбор и закупка материалов',
-      'Логистика и приёмка',
+      'Определение стиля',
+      'Отделка',
+      'Подборка фактур',
+      'Сценарий освещения',
     ],
   },
 ];
@@ -77,12 +105,28 @@ const steps = [
                   {t.unit && <span>{t.unit}</span>}
                 </div>
               </div>
-              <p class="tariff-desc">{t.desc}</p>
-              <ul class="tariff-points">
-                {t.points.map((p) => (
-                  <li>{p}</li>
-                ))}
-              </ul>
+              {t.desc && <p class="tariff-desc">{t.desc}</p>}
+              {t.points && (
+                <ul class="tariff-points">
+                  {t.points.map((p) => (
+                    <li>{p}</li>
+                  ))}
+                </ul>
+              )}
+              {t.groups && (
+                <div class="tariff-groups">
+                  {t.groups.map((g) => (
+                    <div class="tariff-group">
+                      <h3 class="tariff-group-name">{g.h}</h3>
+                      <ul class="tariff-points">
+                        {g.items.map((p) => (
+                          <li>{p}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
               <a href={link('/contact')} class="tariff-cta">
                 Обсудить <span>→</span>
               </a>
@@ -133,8 +177,24 @@ const steps = [
 
   .tariffs {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: clamp(1.2rem, 2.5vw, 2rem);
+  }
+  .tariff-groups {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1rem, 2vw, 1.8rem);
+    margin-top: 1.4rem;
+  }
+  .tariff-group-name {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+    margin-bottom: 0.6rem;
+  }
+  .tariff-groups .tariff-points {
+    margin-top: 0;
   }
   .tariff {
     display: flex;
@@ -292,7 +352,8 @@ const steps = [
   }
 
   @media (max-width: 1024px), (pointer: coarse) {
-    .tariffs {
+    .tariffs,
+    .tariff-groups {
       grid-template-columns: 1fr;
     }
     .process-list {
