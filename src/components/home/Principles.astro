@@ -103,7 +103,7 @@ const principles: Tool[] = [
       <h2 class="reveal" data-delay="1">Инструменты<br />места&nbsp;силы</h2>
       <p class="principles-lead reveal" data-delay="2">
         8 инструментов, которые делают ваше пространство местом силы.
-        Нажмите на пункт, чтобы прочитать.
+        Пункты раскрываются по мере прокрутки — нажмите, чтобы прочитать целиком.
       </p>
       <div class="principles-counter serif reveal" data-delay="2">
         <span data-counter>01</span><span class="sep">/</span><span class="total">08</span>
@@ -152,6 +152,7 @@ const principles: Tool[] = [
                 {p.howOutro && <p class="p-text">{p.howOutro}</p>}
               </div>
             </div>
+            <span class="p-more">Нажмите, чтобы прочитать целиком</span>
           </li>
         ))
       }
@@ -222,10 +223,6 @@ const principles: Tool[] = [
     text-align: left;
     cursor: pointer;
     color: inherit;
-    /* Свёрнутый список должен быть выше экрана — иначе при прокрутке линию
-       раскрытия пересекают сразу несколько заголовков и они открываются пачкой */
-    min-height: 7.4rem;
-    align-items: center;
   }
   .p-num {
     flex-shrink: 0;
@@ -286,6 +283,28 @@ const principles: Tool[] = [
   }
   .p-panel-inner {
     overflow: hidden;
+  }
+  /* При автораскрытии показываем начало текста: список остаётся компактным,
+     все восемь пунктов рядом. Полный текст — по клику (.is-full). */
+  .principle:not(.is-full) .p-panel-inner {
+    max-height: 10rem;
+    -webkit-mask-image: linear-gradient(to bottom, #000 46%, transparent 96%);
+    mask-image: linear-gradient(to bottom, #000 46%, transparent 96%);
+  }
+  .p-more {
+    display: none;
+    margin-top: 0.1rem;
+    padding-bottom: clamp(1.2rem, 2.4vw, 1.8rem);
+    margin-left: calc(2.6rem + clamp(1rem, 3vw, 2.4rem));
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    color: var(--c-accent);
+  }
+  .p-head[aria-expanded='true'] ~ .p-more {
+    display: block;
+  }
+  .principle.is-full .p-more {
+    display: none;
   }
   .p-panel-inner > *:first-child {
     padding-top: 0.2rem;
@@ -368,25 +387,23 @@ const principles: Tool[] = [
     prAC = new AbortController();
     const { signal } = prAC;
 
+    const rows = items.map((b) => b.closest('li') as HTMLElement);
     let active = 0;
 
-    /** Открыть пункт idx (−1 — закрыть все). instant — без анимации. */
-    const open = (idx: number, instant: boolean) => {
-      if (instant) list?.classList.add('no-anim');
+    /** Раскрыт всегда ровно один пункт. full — показать текст целиком. */
+    const setActive = (idx: number, full: boolean) => {
       items.forEach((b, i) => b.setAttribute('aria-expanded', String(i === idx)));
-      if (instant) {
-        void list?.offsetHeight; // форсируем пересчёт, пока анимация выключена
-        list?.classList.remove('no-anim');
-      }
+      rows.forEach((li, i) => li.classList.toggle('is-full', full && i === idx));
       if (idx >= 0 && counter) counter.textContent = String(idx + 1).padStart(2, '0');
       active = idx;
     };
+    setActive(0, false);
 
-    // Клик по пункту — открыть/закрыть вручную
+    // Клик — развернуть пункт целиком (повторный клик сворачивает до превью)
     items.forEach((btn, i) => {
       btn.addEventListener(
         'click',
-        () => open(btn.getAttribute('aria-expanded') === 'true' ? -1 : i, false),
+        () => setActive(i, !rows[i].classList.contains('is-full')),
         { signal }
       );
     });
@@ -394,37 +411,30 @@ const principles: Tool[] = [
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     // Пункты раскрываются сами по мере прокрутки: 01, 02, 03…
-    //
-    // Раскрытый пункт больше не закрывается. Это принципиально: если закрывать
-    // предыдущий, всё, что ниже, скачком уезжает вверх — компенсировать сдвиг
-    // на инерционном скролле надёжно не выходит. Раскрытие же происходит у
-    // нижней кромки экрана, поэтому текст «подрастает» за кадром и ничего не
-    // прыгает. Закрыть пункт по-прежнему можно кликом.
+    // Открыт всегда один — список остаётся компактным, поэтому заголовки
+    // пересекают линию чтения по одному и ничего не перескакивает.
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
         ticking = false;
-        const openLine = window.innerHeight * 0.86; // раскрываем заранее, ниже сгиба
-        const readLine = window.innerHeight * 0.42; // а счётчик — по центру экрана
-        // За один кадр раскрываем не больше одного пункта — так они открываются
-        // по очереди, а не пачкой, даже когда свёрнутый список умещается в экран
-        const next = items.find(
-          (b) =>
-            b.getAttribute('aria-expanded') !== 'true' &&
-            b.getBoundingClientRect().top <= openLine
-        );
-        if (next) next.setAttribute('aria-expanded', 'true');
-
-        let current = -1;
+        const line = window.innerHeight * 0.4;
+        let idx = -1;
+        let best = Infinity;
         items.forEach((b, i) => {
-          if (b.getBoundingClientRect().top <= readLine) current = i;
+          const d = Math.abs(b.getBoundingClientRect().top - line);
+          if (d < best) {
+            best = d;
+            idx = i;
+          }
         });
-        if (current >= 0 && current !== active) {
-          active = current;
-          if (counter) counter.textContent = String(current + 1).padStart(2, '0');
-        }
+        // пункт, раскрытый кликом, не перебиваем прокруткой
+        if (idx < 0 || idx === active || rows[active]?.classList.contains('is-full')) return;
+        // шагаем строго по одному: смена пункта сдвигает список на высоту
+        // превью, и без этого ограничения выбор перескакивал через пункты
+        idx = idx > active ? active + 1 : active - 1;
+        setActive(idx, false);
       });
     };
 
