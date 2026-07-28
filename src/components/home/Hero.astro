@@ -102,11 +102,10 @@ const tall = await getImage({
     object-fit: cover;
     object-position: center 42%;
   }
-  /* На широком экране кадр горизонтальный — смещаем вниз, чтобы в кадр попали
-     диваны и столик, а не одна только панель */
+  /* Горизонтальный кадр уже скадрирован под 2:1 — показываем как есть */
   @media (min-width: 768px) {
     .hero-img {
-      object-position: center 64%;
+      object-position: center center;
     }
   }
   /* Тёплая вуаль: плотнее слева-снизу, где лежит текст, и почти прозрачная

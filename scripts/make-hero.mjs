@@ -17,8 +17,11 @@ const SRC =
 const DEST_DIR = 'C:/Users/admin/Desktop/godesign/src/assets/hero';
 
 const CROP_LEFT = 0.22; // слева телевизор — убираем
-const WIDE_TOP = 300; // полоса с панелью, диванами и окном
-const WIDE_H = 1000;
+// Полоса ровно под пропорции широкого экрана (2:1). Берём её ниже, чем панель:
+// сверху остаётся золотистая штора, снизу — диваны, кресла и столик. Если взять
+// выше, в кадре одна штора и интерьер не читается.
+const WIDE_TOP = 700;
+const WIDE_RATIO = 2.0;
 
 if (!existsSync(DEST_DIR)) mkdirSync(DEST_DIR, { recursive: true });
 
@@ -32,9 +35,10 @@ const tall = await sharp(SRC)
   .webp({ quality: 84 })
   .toFile(`${DEST_DIR}/semeyny-tall.webp`);
 
+const wideH = Math.round(w / WIDE_RATIO);
 const wide = await sharp(SRC)
   .rotate()
-  .extract({ left, top: WIDE_TOP, width: w, height: WIDE_H })
+  .extract({ left, top: WIDE_TOP, width: w, height: wideH })
   .webp({ quality: 84 })
   .toFile(`${DEST_DIR}/semeyny-wide.webp`);
 
