@@ -44,7 +44,8 @@ import Base from '../layouts/Base.astro';
 
       <!-- Форма -->
       <div class="contact-form-wrap reveal" data-delay="2">
-        <!-- Статический сайт (Surge): форма шлётся напрямую в Telegram Bot API из JS -->
+        <h2 class="visually-hidden">Форма заявки</h2>
+        <!-- Статический сайт: форма шлётся напрямую в Telegram Bot API из JS -->
         <form class="contact-form" data-contact-form method="POST">
           <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display: none" aria-hidden="true" />
           <div class="field">

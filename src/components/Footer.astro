@@ -116,6 +116,16 @@ const year = new Date().getFullYear();
     margin-bottom: 0.7rem;
     transition: color 0.3s var(--ease);
   }
+  /* На телефоне увеличиваем зону нажатия ссылок подвала */
+  @media (max-width: 1024px), (pointer: coarse) {
+    .footer-col a {
+      padding-block: 0.5rem;
+      margin-bottom: 0.15rem;
+    }
+    .footer-social a {
+      padding-block: 0.55rem;
+    }
+  }
   .footer-col a:hover {
     color: var(--c-accent);
   }

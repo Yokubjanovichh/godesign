@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://godesign.yokubjanovich.workers.dev/sitemap-index.xml
+Sitemap: https://godesign-bakx.onrender.com/sitemap-index.xml
