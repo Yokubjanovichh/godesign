@@ -101,6 +101,8 @@ const ogImage = new URL(image, Astro.site);
   </head>
   <body>
     <span id="top" aria-hidden="true"></span>
+    <!-- Полоска перехода: показывает, что страница уже грузится -->
+    <div class="nav-progress" data-nav-progress aria-hidden="true" transition:persist></div>
     <Cursor />
     <Header transparent={heroTransparent} />
     <slot />
@@ -148,6 +150,55 @@ const ogImage = new URL(image, Astro.site);
         ScrollTrigger.refresh();
       });
       document.addEventListener('astro:page-load', () => ScrollTrigger.refresh());
+    </script>
+
+    <script>
+      // --- Переходы между страницами ---
+      // 1) Полоска прогресса: пока Astro тянет HTML, старая страница остаётся на
+      //    экране и кажется «зависшей». Полоска показывает, что переход идёт.
+      const bar = document.querySelector<HTMLElement>('[data-nav-progress]');
+      let barTimer: number | undefined;
+      document.addEventListener('astro:before-preparation', () => {
+        if (!bar) return;
+        clearTimeout(barTimer);
+        bar.classList.add('is-on');
+        bar.style.width = '0%';
+        requestAnimationFrame(() => (bar.style.width = '72%'));
+      });
+      document.addEventListener('astro:page-load', () => {
+        if (!bar) return;
+        bar.style.width = '100%';
+        barTimer = window.setTimeout(() => {
+          bar.classList.remove('is-on');
+          bar.style.width = '0%';
+        }, 260);
+      });
+
+      // 2) Прогрев страниц. Astro сам пропускает предзагрузку на «медленных»
+      //    соединениях — а у наших посетителей оно как раз такое, поэтому
+      //    просим явно, с ignoreSlowConnection.
+      import('astro:prefetch').then(({ prefetch }) => {
+        const warmed = new Set<string>();
+        const warm = (url?: string | null) => {
+          if (!url || warmed.has(url)) return;
+          warmed.add(url);
+          try {
+            prefetch(url, { ignoreSlowConnection: true });
+          } catch {}
+        };
+
+        // при наведении/касании — то, куда человек собирается
+        const onIntent = (e: Event) => {
+          const a = (e.target as HTMLElement)?.closest?.('a[href]') as HTMLAnchorElement | null;
+          if (a && a.origin === location.origin) warm(a.pathname);
+        };
+        document.addEventListener('pointerover', onIntent, { passive: true });
+        document.addEventListener('touchstart', onIntent, { passive: true });
+
+        // в простое — основные разделы, они лёгкие
+        const idle = (window as any).requestIdleCallback || ((f: any) => setTimeout(f, 1200));
+        idle(() => ['/projects/', '/about/', '/services/', '/art/', '/contact/'].forEach(warm));
+      });
     </script>
 
     <script>

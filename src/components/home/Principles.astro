@@ -222,6 +222,10 @@ const principles: Tool[] = [
     text-align: left;
     cursor: pointer;
     color: inherit;
+    /* Свёрнутый список должен быть выше экрана — иначе при прокрутке линию
+       раскрытия пересекают сразу несколько заголовков и они открываются пачкой */
+    min-height: 7.4rem;
+    align-items: center;
   }
   .p-num {
     flex-shrink: 0;
@@ -270,6 +274,12 @@ const principles: Tool[] = [
     display: grid;
     grid-template-rows: 0fr;
     transition: grid-template-rows 0.5s var(--ease);
+  }
+  /* На время смены пункта при скролле анимацию гасим: высота меняется
+     мгновенно, и скрипт ровно на столько же подкручивает страницу —
+     иначе список «прыгает» под курсором */
+  .principles-list.no-anim .p-panel {
+    transition: none;
   }
   .p-head[aria-expanded='true'] + .p-panel {
     grid-template-rows: 1fr;
@@ -345,23 +355,81 @@ const principles: Tool[] = [
 </style>
 
 <script>
+  let prAC: AbortController | null = null;
+
   function initPrinciples() {
+    prAC?.abort();
     const section = document.querySelector<HTMLElement>('[data-principles]');
-    if (!section || section.dataset.prReady) return;
+    if (!section) return;
     const items = Array.from(section.querySelectorAll<HTMLElement>('[data-principle-btn]'));
     if (!items.length) return;
-    section.dataset.prReady = '1';
     const counter = section.querySelector('[data-counter]');
+    const list = section.querySelector<HTMLElement>('.principles-list');
+    prAC = new AbortController();
+    const { signal } = prAC;
 
+    let active = 0;
+
+    /** Открыть пункт idx (−1 — закрыть все). instant — без анимации. */
+    const open = (idx: number, instant: boolean) => {
+      if (instant) list?.classList.add('no-anim');
+      items.forEach((b, i) => b.setAttribute('aria-expanded', String(i === idx)));
+      if (instant) {
+        void list?.offsetHeight; // форсируем пересчёт, пока анимация выключена
+        list?.classList.remove('no-anim');
+      }
+      if (idx >= 0 && counter) counter.textContent = String(idx + 1).padStart(2, '0');
+      active = idx;
+    };
+
+    // Клик по пункту — открыть/закрыть вручную
     items.forEach((btn, i) => {
-      btn.addEventListener('click', () => {
-        const open = btn.getAttribute('aria-expanded') === 'true';
-        // аккордеон: открыт всегда один пункт
-        items.forEach((b) => b.setAttribute('aria-expanded', 'false'));
-        btn.setAttribute('aria-expanded', open ? 'false' : 'true');
-        if (!open && counter) counter.textContent = String(i + 1).padStart(2, '0');
-      });
+      btn.addEventListener(
+        'click',
+        () => open(btn.getAttribute('aria-expanded') === 'true' ? -1 : i, false),
+        { signal }
+      );
     });
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Пункты раскрываются сами по мере прокрутки: 01, 02, 03…
+    //
+    // Раскрытый пункт больше не закрывается. Это принципиально: если закрывать
+    // предыдущий, всё, что ниже, скачком уезжает вверх — компенсировать сдвиг
+    // на инерционном скролле надёжно не выходит. Раскрытие же происходит у
+    // нижней кромки экрана, поэтому текст «подрастает» за кадром и ничего не
+    // прыгает. Закрыть пункт по-прежнему можно кликом.
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const openLine = window.innerHeight * 0.86; // раскрываем заранее, ниже сгиба
+        const readLine = window.innerHeight * 0.42; // а счётчик — по центру экрана
+        // За один кадр раскрываем не больше одного пункта — так они открываются
+        // по очереди, а не пачкой, даже когда свёрнутый список умещается в экран
+        const next = items.find(
+          (b) =>
+            b.getAttribute('aria-expanded') !== 'true' &&
+            b.getBoundingClientRect().top <= openLine
+        );
+        if (next) next.setAttribute('aria-expanded', 'true');
+
+        let current = -1;
+        items.forEach((b, i) => {
+          if (b.getBoundingClientRect().top <= readLine) current = i;
+        });
+        if (current >= 0 && current !== active) {
+          active = current;
+          if (counter) counter.textContent = String(current + 1).padStart(2, '0');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true, signal });
+    onScroll();
   }
 
   initPrinciples();

@@ -213,3 +213,22 @@ html.js .reveal[data-delay='4'] { transition-delay: 0.32s; }
     transform: none;
   }
 }
+
+/* --- Полоска перехода между страницами --- */
+.nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: var(--c-accent);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    width 0.45s var(--ease-out),
+    opacity 0.25s var(--ease);
+}
+.nav-progress.is-on {
+  opacity: 1;
+}

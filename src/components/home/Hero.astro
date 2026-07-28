@@ -1,23 +1,43 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 // Тёплый кадр «Загородного семейного клуба», развёрнутый правее — на золотистую
-// панель; телевизор срезан (см. scripts/make-hero.mjs, просьба Ольги)
-import heroImg from '../../assets/hero/semeyny-panel.webp';
+// панель; телевизор срезан (см. scripts/make-hero.mjs, просьба Ольги).
+// Два варианта: на широком экране вертикальный кадр обрезался бы почти на 2/3.
+import heroWide from '../../assets/hero/semeyny-wide.webp';
+import heroTall from '../../assets/hero/semeyny-tall.webp';
+
+const wide = await getImage({
+  src: heroWide,
+  widths: [1024, 1440, 1560],
+  format: 'webp',
+  quality: 80,
+});
+const tall = await getImage({
+  src: heroTall,
+  widths: [640, 900, 1200],
+  format: 'webp',
+  quality: 80,
+});
 ---
 
 <section class="hero" data-hero>
   <div class="hero-media" data-hero-clip>
     <div class="hero-img-scale" data-hero-img>
-      <Image
-        src={heroImg}
-        alt="Загородный семейный клуб — тёплый интерьер, проект Ольги Горчаковой"
-        widths={[960, 1280, 1560]}
-        quality={80}
-        sizes="100vw"
-        loading="eager"
-        fetchpriority="high"
-        class="hero-img"
-      />
+      <picture>
+        <source media="(min-width: 768px)" srcset={wide.srcSet.attribute} sizes="100vw" />
+        <img
+          src={tall.src}
+          srcset={tall.srcSet.attribute}
+          sizes="100vw"
+          width={tall.attributes.width}
+          height={tall.attributes.height}
+          alt="Загородный семейный клуб — тёплый интерьер, проект Ольги Горчаковой"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="hero-img"
+        />
+      </picture>
     </div>
     <div class="hero-veil"></div>
     <div class="hero-grain"></div>
@@ -69,11 +89,25 @@ import heroImg from '../../assets/hero/semeyny-panel.webp';
     inset: -2%;
     will-change: transform;
   }
+  /* <picture> — обёртка без собственной высоты: без этого height:100 % у <img>
+     не к чему привязаться, и кадр вылезает за рамку, обрезая мебель */
+  .hero-img-scale picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
   .hero-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center 42%;
+  }
+  /* На широком экране кадр горизонтальный — смещаем вниз, чтобы в кадр попали
+     диваны и столик, а не одна только панель */
+  @media (min-width: 768px) {
+    .hero-img {
+      object-position: center 64%;
+    }
   }
   /* Тёплая вуаль: плотнее слева-снизу, где лежит текст, и почти прозрачная
      справа — заголовок больше не сливается со светлой панелью
@@ -265,10 +299,11 @@ import heroImg from '../../assets/hero/semeyny-panel.webp';
       .to('[data-hero-word]', { yPercent: 0, duration: 1.15, stagger: 0.09 }, 0.55)
       .to('[data-hero-fade]', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 1.0);
 
-    // Медленный Ken Burns после входа
+    // Медленный Ken Burns после входа. Держим приближение слабым: при 1.12
+    // с горизонтального кадра «съедалась» вся мебель, оставалась одна панель.
     gsap.to('[data-hero-img]', {
-      scale: 1.12,
-      duration: 18,
+      scale: 1.05,
+      duration: 20,
       ease: 'none',
       delay: 2,
     });
