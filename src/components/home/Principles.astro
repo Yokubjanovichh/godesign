@@ -152,7 +152,9 @@ const principles: Tool[] = [
                 {p.howOutro && <p class="p-text">{p.howOutro}</p>}
               </div>
             </div>
-            <span class="p-more">Нажмите, чтобы прочитать целиком</span>
+            <button type="button" class="p-more" data-principle-more>
+              Нажмите, чтобы прочитать целиком
+            </button>
           </li>
         ))
       }
@@ -291,14 +293,28 @@ const principles: Tool[] = [
     -webkit-mask-image: linear-gradient(to bottom, #000 46%, transparent 96%);
     mask-image: linear-gradient(to bottom, #000 46%, transparent 96%);
   }
+  /* Свёрнутый текст кликабелен целиком: подсказка «нажмите» должна нажиматься */
+  .principle:not(.is-full) .p-panel {
+    cursor: pointer;
+  }
   .p-more {
     display: none;
     margin-top: 0.1rem;
-    padding-bottom: clamp(1.2rem, 2.4vw, 1.8rem);
+    padding: 0 0 clamp(1.2rem, 2.4vw, 1.8rem);
     margin-left: calc(2.6rem + clamp(1rem, 3vw, 2.4rem));
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
     font-size: 0.8rem;
     letter-spacing: 0.02em;
     color: var(--c-accent);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s var(--ease);
+  }
+  .p-more:hover {
+    border-bottom-color: var(--c-accent);
   }
   .p-head[aria-expanded='true'] ~ .p-more {
     display: block;
@@ -399,7 +415,7 @@ const principles: Tool[] = [
     };
     setActive(0, false);
 
-    // Клик — развернуть пункт целиком (повторный клик сворачивает до превью)
+    // Клик по заголовку — развернуть целиком (повторный клик сворачивает до превью)
     items.forEach((btn, i) => {
       btn.addEventListener(
         'click',
@@ -407,6 +423,21 @@ const principles: Tool[] = [
         { signal }
       );
     });
+
+    // Клик по подсказке или по самому свёрнутому тексту — тоже разворачивает.
+    // Раскрытый текст не трогаем, иначе его нельзя было бы выделить мышью.
+    list?.addEventListener(
+      'click',
+      (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('[data-principle-btn]')) return; // это обработчик выше
+        const li = target.closest('li');
+        if (!li || li.classList.contains('is-full')) return;
+        const i = rows.indexOf(li as HTMLElement);
+        if (i >= 0) setActive(i, true);
+      },
+      { signal }
+    );
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -419,6 +450,16 @@ const principles: Tool[] = [
       ticking = true;
       requestAnimationFrame(() => {
         ticking = false;
+        // Пункт, раскрытый кликом, не перебиваем, пока он на экране — иначе
+        // текст свернётся прямо во время чтения. Ушёл из виду — снимаем фиксацию,
+        // и прокрутка снова ведёт список.
+        const openRow = rows[active];
+        if (openRow?.classList.contains('is-full')) {
+          const r = openRow.getBoundingClientRect();
+          if (r.bottom > 0 && r.top < window.innerHeight) return;
+          openRow.classList.remove('is-full');
+        }
+
         const line = window.innerHeight * 0.4;
         let idx = -1;
         let best = Infinity;
@@ -429,8 +470,7 @@ const principles: Tool[] = [
             idx = i;
           }
         });
-        // пункт, раскрытый кликом, не перебиваем прокруткой
-        if (idx < 0 || idx === active || rows[active]?.classList.contains('is-full')) return;
+        if (idx < 0 || idx === active) return;
         // шагаем строго по одному: смена пункта сдвигает список на высоту
         // превью, и без этого ограничения выбор перескакивал через пункты
         idx = idx > active ? active + 1 : active - 1;
