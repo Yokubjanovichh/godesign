@@ -405,6 +405,8 @@ const principles: Tool[] = [
 
     const rows = items.map((b) => b.closest('li') as HTMLElement);
     let active = 0;
+    /** Пока не истечёт — прокрутка не перебивает только что сделанный клик. */
+    let clickLockUntil = 0;
 
     /** Раскрыт всегда ровно один пункт. full — показать текст целиком. */
     const setActive = (idx: number, full: boolean) => {
@@ -415,11 +417,38 @@ const principles: Tool[] = [
     };
     setActive(0, false);
 
+    /** Прокрутка на delta без борьбы с инерционным Lenis. */
+    const nudge = (delta: number) => {
+      const lenis = (window as any).__lenis;
+      if (lenis?.scrollTo) lenis.scrollTo(window.scrollY + delta, { immediate: true, force: true });
+      else window.scrollBy(0, delta);
+    };
+
+    /**
+     * Открыть пункт по клику, удержав его заголовок под курсором.
+     * Прежде раскрытый пункт сворачивается мгновенно: он выше по списку, и без
+     * компенсации всё уезжает вверх — человек жмёт на название, а оно убегает.
+     */
+    const openByClick = (i: number, full: boolean) => {
+      const anchor = items[i];
+      const before = anchor.getBoundingClientRect().top;
+      // сначала приводим список в конечный вид — мгновенно, чтобы замер сдвига
+      // был точным; иначе подкрутка страницы вызовет обработчик прокрутки
+      // раньше, чем состояние обновится, и он перебьёт клик
+      list?.classList.add('no-anim');
+      setActive(i, full);
+      void list?.offsetHeight;
+      list?.classList.remove('no-anim');
+      const delta = anchor.getBoundingClientRect().top - before;
+      clickLockUntil = performance.now() + 500;
+      if (Math.abs(delta) > 1) nudge(delta);
+    };
+
     // Клик по заголовку — развернуть целиком (повторный клик сворачивает до превью)
     items.forEach((btn, i) => {
       btn.addEventListener(
         'click',
-        () => setActive(i, !rows[i].classList.contains('is-full')),
+        () => openByClick(i, !rows[i].classList.contains('is-full')),
         { signal }
       );
     });
@@ -434,7 +463,7 @@ const principles: Tool[] = [
         const li = target.closest('li');
         if (!li || li.classList.contains('is-full')) return;
         const i = rows.indexOf(li as HTMLElement);
-        if (i >= 0) setActive(i, true);
+        if (i >= 0) openByClick(i, true);
       },
       { signal }
     );
@@ -450,6 +479,7 @@ const principles: Tool[] = [
       ticking = true;
       requestAnimationFrame(() => {
         ticking = false;
+        if (performance.now() < clickLockUntil) return;
         // Пункт, раскрытый кликом, не перебиваем, пока он на экране — иначе
         // текст свернётся прямо во время чтения. Ушёл из виду — снимаем фиксацию,
         // и прокрутка снова ведёт список.
