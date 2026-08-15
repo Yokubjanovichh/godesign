@@ -1,10 +1,12 @@
 ---
-import '@fontsource-variable/fraunces';
-import '@fontsource-variable/hanken-grotesk';
-import '@fontsource/cormorant/400.css';
-import '@fontsource/cormorant/400-italic.css';
-import '@fontsource/cormorant/500.css';
-import '@fontsource/cormorant/500-italic.css';
+// Две гарнитуры на весь сайт, обе с кириллицей (см. global.css).
+import '@fontsource-variable/playfair-display';
+import '@fontsource-variable/manrope';
+// Кириллические начертания грузим заранее: без этого страница успевала
+// отрисоваться системным шрифтом и «прыгала» при подмене (замечание Ольги).
+import playfairCyr from '@fontsource-variable/playfair-display/files/playfair-display-cyrillic-wght-normal.woff2?url';
+import playfairCyrItalic from '@fontsource-variable/playfair-display/files/playfair-display-cyrillic-wght-italic.woff2?url';
+import manropeCyr from '@fontsource-variable/manrope/files/manrope-cyrillic-wght-normal.woff2?url';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import { link } from '../utils/link';
@@ -38,6 +40,10 @@ const ogImage = new URL(image, Astro.site);
     <link rel="icon" type="image/svg+xml" href={link('/favicon.svg')} />
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
+
+    <link rel="preload" as="font" type="font/woff2" href={manropeCyr} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={playfairCyr} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={playfairCyrItalic} crossorigin />
 
     <!-- Устраняем FOUC для reveal-анимаций + помечаем сенсорные устройства.
          In-app браузеры (Telegram, Max) иногда рендерят страницу с широким

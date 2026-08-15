@@ -1,300 +1,325 @@
 ---
 import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
 import { link } from '../utils/link';
-
-/** Состав и цены — как на сайте Ольги (ongorchakova-design.ru/price). */
-const tariffs = [
-  {
-    name: 'Консультации и встречи',
-    price: 'от 3 000 ₽',
-    unit: '',
-    desc: 'Разбор вашего пространства, идеи и вектор. Точка старта перед проектом.',
-    points: [
-      'Онлайн — 3 000 ₽ за 1 час',
-      'Зеленоград — 6 000 ₽, от 3 часов',
-      'Москва — 10 000 ₽, от 3 часов',
-    ],
-  },
-  {
-    name: 'Дизайн-проект',
-    price: 'от 4 500 ₽',
-    unit: '/ м²',
-    desc: 'Подробная рабочая документация будущего интерьера — инструкция, по которой работают строители и поставщики.',
-    points: [
-      'Планировочное решение',
-      'Фотореалистичные визуализации',
-      'Полный пакет чертежей и спецификаций для строителей',
-    ],
-    featured: true,
-  },
-  {
-    name: 'Авторское сопровождение и комплектация',
-    price: 'от 60 000 ₽',
-    unit: '/ мес',
-    desc: 'Контроль реализации и подбор всех материалов, мебели и декора. Проект воплощается точно по замыслу.',
-    groups: [
-      {
-        h: 'Авторский надзор',
-        items: [
-          'Выезды на объект по графику',
-          'Проверка соответствия работ чертежам',
-          'Контроль качества материалов и отделки',
-          'Оперативное решение вопросов на стройке',
-        ],
-      },
-      {
-        h: 'Комплектация',
-        items: [
-          'Подбор отделочных материалов',
-          'Заказ мебели по проекту',
-          'Закупка освещения и сантехники',
-          'Логистика и приёмка на объекте',
-          'Декор и текстиль',
-        ],
-      },
-    ],
-  },
-  {
-    name: 'Декорирование пространства',
-    price: 'по запросу',
-    unit: '',
-    points: [
-      'Определение стиля',
-      'Отделка',
-      'Подборка фактур',
-      'Сценарий освещения',
-    ],
-  },
-];
-
-const steps = [
-  { t: 'Знакомство', d: 'Обсуждаем задачу, образ жизни и бюджет.' },
-  { t: 'Планировка', d: 'Зонирование и эргономика под ваши сценарии.' },
-  { t: 'Визуализации', d: 'Видите будущий интерьер до начала ремонта.' },
-  { t: 'Чертежи', d: 'Полная документация для строителей.' },
-  { t: 'Надзор', d: 'Контролируем воплощение до последней детали.' },
-];
+import { services, servicesNote } from '../data/services';
+// Временный баннер — Ольга выбирает своё «центральное» фото для этой страницы.
+import banner from '../assets/projects/edem/01.webp';
 ---
 
 <Base
   title="Услуги и цены — дизайн интерьера | Ольга Горчакова"
-  description="Дизайн-проект интерьера от 4500 ₽/м², авторский надзор и комплектация, консультации. Прозрачные условия и договор."
+  description="Дизайн-проект интерьера от 4500 ₽/м², авторское сопровождение и комплектация, услуги декоратора, консультации. Прозрачные условия и договор."
 >
   <section class="services">
     <div class="container">
+      <!-- Баннер показан целиком, в натуральных пропорциях (просьба Ольги
+           «чтобы видели», пример — interior-kod.ru) -->
+      <figure class="sv-banner reveal">
+        <Image
+          src={banner}
+          alt="Интерьер работы Ольги Горчаковой"
+          widths={[760, 1120, 1600]}
+          sizes="(max-width: 1024px) 94vw, 1360px"
+          quality={80}
+          loading="eager"
+          fetchpriority="high"
+          class="sv-banner-img"
+        />
+      </figure>
+
       <header class="services-head">
         <p class="eyebrow reveal">Услуги</p>
-        <h1 class="reveal" data-delay="1">Как мы<br />работаем</h1>
+        <h1 class="reveal" data-delay="1">Как мы работаем</h1>
         <p class="services-sub reveal" data-delay="2">
-          От первой консультации до готового интерьера «под ключ». Прозрачные
-          условия, договор и защита ваших интересов на каждом этапе.
+          От первой консультации до готового интерьера «под ключ». Нажмите
+          «плюс», чтобы раскрыть состав и этапы работы.
         </p>
       </header>
 
-      <div class="tariffs">
+      <ol class="sv-list" data-sv-list>
         {
-          tariffs.map((t, i) => (
-            <div
-              class:list={['tariff', { 'is-featured': t.featured }, 'reveal']}
-              data-delay={String((i % 3) + 1)}
-            >
-              <div class="tariff-top">
-                <h2 class="tariff-name serif">{t.name}</h2>
-                <div class="tariff-price">
-                  <b>{t.price}</b>
-                  {t.unit && <span>{t.unit}</span>}
-                </div>
-              </div>
-              {t.desc && <p class="tariff-desc">{t.desc}</p>}
-              {t.points && (
-                <ul class="tariff-points">
-                  {t.points.map((p) => (
-                    <li>{p}</li>
-                  ))}
-                </ul>
-              )}
-              {t.groups && (
-                <div class="tariff-groups">
-                  {t.groups.map((g) => (
-                    <div class="tariff-group">
-                      <h3 class="tariff-group-name">{g.h}</h3>
-                      <ul class="tariff-points">
-                        {g.items.map((p) => (
-                          <li>{p}</li>
+          services.map((s, i) => (
+            <li class="sv-item reveal">
+              <h2 class="sv-h">
+                <button
+                  type="button"
+                  class="sv-head"
+                  data-sv-btn
+                  aria-expanded="false"
+                  aria-controls={`sv-${s.slug}`}
+                >
+                  <span class="sv-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="sv-name">{s.name}</span>
+                  <span class="sv-price">
+                    {s.price}
+                    {s.unit && <i>{s.unit}</i>}
+                  </span>
+                  <span class="sv-sign" aria-hidden="true" />
+                </button>
+              </h2>
+
+              <div class="sv-panel" id={`sv-${s.slug}`} data-sv-panel>
+                <div class="sv-panel-inner">
+                  {s.duration && (
+                    <p class="sv-duration">Продолжительность: {s.duration}</p>
+                  )}
+                  <p class="sv-lead">{s.lead}</p>
+
+                  {s.blocks.map((b) =>
+                    b.k === 'h' ? (
+                      <h3 class="sv-block-h">{b.v}</h3>
+                    ) : b.k === 'sub' ? (
+                      <p class="sv-block-sub">{b.v}</p>
+                    ) : b.k === 'p' ? (
+                      <p class="sv-p">{b.v}</p>
+                    ) : b.k === 'ul' ? (
+                      <ul class="sv-ul">
+                        {b.v.map((x) => (
+                          <li>{x}</li>
                         ))}
                       </ul>
-                    </div>
-                  ))}
+                    ) : (
+                      <dl class="sv-dl">
+                        {b.v.map((x) => (
+                          <>
+                            <dt>{x.t}</dt>
+                            <dd>{x.d}</dd>
+                          </>
+                        ))}
+                      </dl>
+                    )
+                  )}
+
+                  <a href={link('/contact')} class="sv-cta">
+                    Обсудить <span>→</span>
+                  </a>
                 </div>
-              )}
-              <a href={link('/contact')} class="tariff-cta">
-                Обсудить <span>→</span>
-              </a>
-            </div>
+              </div>
+            </li>
           ))
         }
-      </div>
+      </ol>
 
-      <div class="process">
-        <div class="process-head reveal">
-          <p class="eyebrow">Процесс</p>
-          <h2>Путь проекта</h2>
-        </div>
-        <ol class="process-list">
-          {
-            steps.map((s, i) => (
-              <li class="step reveal" data-delay={String((i % 4) + 1)}>
-                <span class="step-num serif">{String(i + 1).padStart(2, '0')}</span>
-                <h3 class="step-title serif">{s.t}</h3>
-                <p class="step-desc">{s.d}</p>
-              </li>
-            ))
-          }
-        </ol>
-      </div>
+      <p class="sv-note reveal">
+        <b>*</b>
+        {' '}{servicesNote}
+      </p>
     </div>
   </section>
 </Base>
 
 <style>
   .services {
-    padding-top: clamp(8rem, 16vh, 11rem);
+    padding-top: clamp(7rem, 14vh, 9.5rem);
     padding-bottom: clamp(4rem, 9vw, 7rem);
   }
+
+  /* --- Баннер --- */
+  .sv-banner {
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+  .sv-banner-img {
+    display: block;
+    width: 100%;
+    height: auto; /* натуральные пропорции — кадр не обрезается */
+    border-radius: var(--radius);
+  }
+
   .services-head {
     max-width: 46ch;
-    margin-bottom: clamp(3rem, 6vw, 5rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
   }
   .services-head h1 {
-    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-size: clamp(2.8rem, 7vw, 5.6rem);
     margin-top: 1rem;
   }
   .services-sub {
-    margin-top: 1.6rem;
-    font-size: 1.1rem;
+    margin-top: 1.4rem;
+    font-size: 1.08rem;
     color: var(--c-ink-soft);
   }
 
-  .tariffs {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: clamp(1.2rem, 2.5vw, 2rem);
+  /* --- Список услуг с «плюсами» --- */
+  .sv-list {
+    list-style: none;
   }
-  .tariff-groups {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(1rem, 2vw, 1.8rem);
-    margin-top: 1.4rem;
+  .sv-item {
+    border-top: 1px solid var(--c-line);
   }
-  .tariff-group-name {
-    font-size: 0.72rem;
+  .sv-item:last-of-type {
+    border-bottom: 1px solid var(--c-line);
+  }
+  .sv-h {
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: normal;
+    line-height: inherit;
+    margin: 0;
+  }
+  .sv-head {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 2.8rem 1fr auto 20px;
+    align-items: baseline;
+    gap: clamp(0.8rem, 2.4vw, 2rem);
+    padding: clamp(1.5rem, 3vw, 2.3rem) 0;
+    text-align: left;
+    color: inherit;
+  }
+  /* Кнопка лежит внутри h2 и наследовала бы заголовочную гарнитуру —
+     номеру и цене возвращаем текстовую */
+  .sv-num {
+    font-family: var(--f-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--c-accent);
+  }
+  .sv-name {
+    font-family: var(--f-display);
+    font-size: clamp(1.45rem, 2.7vw, 2.2rem);
+    font-weight: 400;
+    line-height: 1.15;
+  }
+  .sv-price {
+    font-family: var(--f-body);
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    font-weight: 600;
+    color: var(--c-accent-deep);
+    white-space: nowrap;
+  }
+  .sv-price i {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 0.82em;
+    color: var(--c-ink-soft);
+    margin-left: 0.25rem;
+  }
+
+  /* Знак «+» → «−» */
+  .sv-sign {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    align-self: center;
+  }
+  .sv-sign::before,
+  .sv-sign::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 1.5px;
+    background: var(--c-accent);
+    transition: transform 0.4s var(--ease);
+  }
+  .sv-sign::after {
+    transform: rotate(90deg);
+  }
+  .sv-head[aria-expanded='true'] .sv-sign::after {
+    transform: rotate(0deg);
+  }
+
+  /* Раскрытие любой высоты — без магических max-height.
+     По умолчанию открыто: если скрипты не отработали, текст всё равно виден.
+     Свернёт его тот же CSS, но только при html.js — класс ставится инлайном
+     в <head>, поэтому мигания нет. */
+  .sv-panel {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.5s var(--ease);
+  }
+  :global(html.js) .sv-item:not(.is-open) .sv-panel {
+    grid-template-rows: 0fr;
+  }
+  .sv-panel-inner {
+    overflow: hidden;
+  }
+  .sv-panel-inner > * {
+    max-width: 64ch;
+    margin-left: calc(2.8rem + clamp(0.8rem, 2.4vw, 2rem));
+  }
+  .sv-panel-inner > *:last-child {
+    margin-bottom: clamp(1.8rem, 3.5vw, 2.6rem);
+  }
+
+  .sv-duration {
+    font-size: 0.8rem;
+    font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--c-accent);
-    margin-bottom: 0.6rem;
   }
-  .tariff-groups .tariff-points {
-    margin-top: 0;
+  .sv-lead {
+    margin-top: 0.6rem;
+    font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+    font-weight: 500;
+    line-height: 1.55;
   }
-  .tariff {
-    display: flex;
-    flex-direction: column;
-    padding: clamp(1.8rem, 3vw, 2.6rem);
-    border: 1px solid var(--c-line);
-    border-radius: var(--radius-lg);
-    background: var(--c-paper);
-    transition:
-      transform 0.5s var(--ease),
-      box-shadow 0.5s var(--ease);
-  }
-  .tariff.is-featured {
-    background: var(--c-accent-deep);
-    color: #f6efe4;
-    border-color: var(--c-accent-deep);
-  }
-  .tariff:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-soft);
-  }
-  .tariff-top {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    padding-bottom: 1.4rem;
-    border-bottom: 1px solid var(--c-line);
-  }
-  .tariff.is-featured .tariff-top {
-    border-color: rgba(246, 239, 228, 0.2);
-  }
-  .tariff-name {
-    font-size: 1.7rem;
-    font-weight: 400;
-  }
-  .tariff-price {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
-  }
-  .tariff-price b {
+  .sv-block-h {
     font-family: var(--f-display);
-    font-size: 2rem;
+    font-size: clamp(1.25rem, 2.1vw, 1.65rem);
     font-weight: 400;
-    color: var(--c-accent);
+    color: var(--c-accent-deep);
+    margin-top: clamp(1.6rem, 3vw, 2.2rem);
   }
-  .tariff.is-featured .tariff-price b {
-    color: #f3ddc8;
+  .sv-block-sub {
+    margin-top: 1.3rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--c-ink);
   }
-  .tariff-price span {
-    font-size: 0.9rem;
+  .sv-p {
+    margin-top: 0.8rem;
+    font-size: 1.02rem;
+    line-height: 1.68;
     color: var(--c-ink-soft);
   }
-  .tariff.is-featured .tariff-price span {
-    color: rgba(246, 239, 228, 0.6);
-  }
-  .tariff-desc {
-    margin-top: 1.4rem;
-    font-size: 0.95rem;
-    color: var(--c-ink-soft);
-  }
-  .tariff.is-featured .tariff-desc {
-    color: rgba(246, 239, 228, 0.7);
-  }
-  .tariff-points {
+  .sv-ul {
     list-style: none;
-    margin-top: 1.4rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    flex-grow: 1;
+    margin-top: 0.9rem;
+    display: grid;
+    gap: 0.5rem;
   }
-  .tariff-points li {
+  .sv-ul li {
     position: relative;
-    padding-left: 1.4rem;
-    font-size: 0.92rem;
+    padding-left: 1.3rem;
+    font-size: 1rem;
+    color: var(--c-ink-soft);
   }
-  .tariff-points li::before {
+  .sv-ul li::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 0.5em;
-    width: 6px;
-    height: 6px;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: var(--c-accent);
   }
-  /* На тёплой акцентной карточке точки-маркеры светлые (иначе сливаются) */
-  .tariff.is-featured .tariff-points li::before {
-    background: rgba(246, 239, 228, 0.85);
+  .sv-dl {
+    margin-top: 1rem;
   }
-  .tariff-cta {
+  .sv-dl dt {
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-ink);
+  }
+  .sv-dl dd {
+    margin-top: 0.2rem;
+    font-size: 1.02rem;
+    line-height: 1.68;
+    color: var(--c-ink-soft);
+  }
+
+  .sv-cta {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 1.8rem;
-    padding: 0.85rem 1.5rem;
+    margin-top: clamp(1.6rem, 3vw, 2.2rem);
+    padding: 0.85rem 1.6rem;
     border-radius: 100px;
-    border: 1px solid currentColor;
-    align-self: flex-start;
+    border: 1px solid var(--c-ink);
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -303,61 +328,96 @@ const steps = [
       background 0.35s var(--ease),
       color 0.35s var(--ease);
   }
-  .tariff:not(.is-featured) .tariff-cta:hover {
+  .sv-cta:hover {
     background: var(--c-ink);
     color: var(--c-paper);
   }
-  .tariff.is-featured .tariff-cta {
-    background: #f6efe4;
-    color: var(--c-ink);
-    border-color: #f6efe4;
-  }
-  .tariff-cta span {
+  .sv-cta span {
     transition: transform 0.35s var(--ease);
   }
-  .tariff-cta:hover span {
+  .sv-cta:hover span {
     transform: translateX(0.35rem);
   }
 
-  /* Процесс */
-  .process {
-    margin-top: clamp(4rem, 9vw, 7rem);
-  }
-  .process-head {
-    margin-bottom: clamp(2rem, 4vw, 3rem);
-    padding-bottom: 1.4rem;
-    border-bottom: 1px solid var(--c-line);
-  }
-  .process-head h2 {
-    margin-top: 0.6rem;
-  }
-  .process-list {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: clamp(1.2rem, 2.5vw, 2rem);
-  }
-  .step-num {
-    font-size: 1rem;
-    color: var(--c-accent);
-  }
-  .step-title {
-    font-size: 1.35rem;
-    font-weight: 400;
-    margin: 0.8rem 0 0.5rem;
-  }
-  .step-desc {
-    font-size: 0.9rem;
+  .sv-note {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    max-width: 76ch;
+    font-size: 0.95rem;
+    line-height: 1.6;
     color: var(--c-ink-soft);
   }
+  .sv-note b {
+    color: var(--c-accent);
+  }
 
-  @media (max-width: 1024px), (pointer: coarse) {
-    .tariffs,
-    .tariff-groups {
-      grid-template-columns: 1fr;
+  @media (max-width: 760px), (pointer: coarse) {
+    /* На телефоне цена уходит под название — иначе строка не помещается */
+    .sv-head {
+      grid-template-columns: 2.1rem 1fr 20px;
+      row-gap: 0.4rem;
     }
-    .process-list {
-      grid-template-columns: 1fr 1fr;
+    .sv-name {
+      grid-column: 2;
+    }
+    .sv-price {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    .sv-sign {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    .sv-panel-inner > * {
+      margin-left: 0;
     }
   }
 </style>
+
+<script>
+  let svAC: AbortController | null = null;
+
+  function initServices() {
+    svAC?.abort();
+    const list = document.querySelector<HTMLElement>('[data-sv-list]');
+    if (!list) return;
+    const btns = Array.from(list.querySelectorAll<HTMLElement>('[data-sv-btn]'));
+    if (!btns.length) return;
+
+    svAC = new AbortController();
+    const { signal } = svAC;
+
+    btns.forEach((btn) => {
+      btn.addEventListener(
+        'click',
+        () => {
+          const open = btn.getAttribute('aria-expanded') === 'true';
+          // Раскрыт всегда один раздел: иначе страница превращается в стену текста
+          btns.forEach((b) => {
+            b.setAttribute('aria-expanded', 'false');
+            b.closest('.sv-item')?.classList.remove('is-open');
+          });
+          btn.setAttribute('aria-expanded', String(!open));
+          btn.closest('.sv-item')?.classList.toggle('is-open', !open);
+          if (open) return;
+
+          // Заголовок оставляем на месте: без этого длинный раздел
+          // «выталкивает» строку из-под пальца
+          requestAnimationFrame(() => {
+            const top = btn.getBoundingClientRect().top;
+            const target = window.innerHeight * 0.18;
+            if (top < target - 4 || top > target + 160) {
+              const delta = top - target;
+              const lenis = (window as any).__lenis;
+              if (lenis?.scrollTo) lenis.scrollTo(window.scrollY + delta, { force: true });
+              else window.scrollBy({ top: delta, behavior: 'smooth' });
+            }
+          });
+        },
+        { signal }
+      );
+    });
+  }
+
+  initServices();
+  document.addEventListener('astro:page-load', initServices);
+</script>

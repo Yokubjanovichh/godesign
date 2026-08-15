@@ -14,10 +14,14 @@
   --c-line: rgba(33, 28, 23, 0.12);
   --c-line-strong: rgba(33, 28, 23, 0.22);
 
-  /* --- Шрифты --- */
-  --f-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
-  --f-serif: 'Cormorant', Georgia, 'Times New Roman', serif;
-  --f-body: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  /* --- Шрифты ---
+     Только две гарнитуры на весь сайт (просьба Ольги «уровнять в единый»).
+     Обе — с настоящей кириллицей: прежние Fraunces и Hanken Grotesk кириллицу
+     не содержат вовсе, поэтому русский текст подменялся системными Georgia и
+     SF Pro. Отсюда и «разнообразие шрифтов», и «шрифт прыгает». */
+  --f-display: 'Playfair Display Variable', Georgia, 'Times New Roman', serif;
+  --f-serif: var(--f-display);
+  --f-body: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* --- Ритм (шкала 8px) --- */
   --space-xs: 0.5rem;
@@ -75,7 +79,8 @@ body {
   background: var(--c-bg);
   color: var(--c-ink);
   font-family: var(--f-body);
-  font-size: 17px;
+  /* было 17px — Ольга просила «чуть крупнее шрифт, не видно» */
+  font-size: 18px;
   font-weight: 400;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -119,9 +124,10 @@ h2,
 h3,
 h4 {
   font-family: var(--f-display);
-  font-weight: 340;
-  line-height: 1.04;
-  letter-spacing: -0.015em;
+  /* Playfair — переменная от 400; всё, что ниже, браузер всё равно зажимает */
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 h1 {
@@ -152,17 +158,17 @@ p {
 }
 .eyebrow {
   font-family: var(--f-body);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--c-accent);
 }
 /* На планшете и телефоне надзаголовки были слишком мелкими (замечание Ольги) */
 @media (max-width: 1024px), (pointer: coarse) {
   .eyebrow {
-    font-size: 0.82rem;
-    letter-spacing: 0.2em;
+    font-size: 0.86rem;
+    letter-spacing: 0.18em;
   }
 }
 .serif {

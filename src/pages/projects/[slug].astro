@@ -29,7 +29,7 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
           <a href={link('/projects')} class="pj-back" data-hero-fade>← Все проекты</a>
           <p class="eyebrow" data-hero-fade>{project.category}</p>
           <h1 class="pj-title" data-hero-fade>{project.title}</h1>
-          <p class="pj-tagline serif italic" data-hero-fade>{project.tagline}</p>
+          <p class="pj-tagline" data-hero-fade>{project.tagline}</p>
           <ul class="pj-facts" data-hero-fade>
             <li><span>Площадь</span><b>{project.area} м²</b></li>
             <li><span>Локация</span><b>{project.location}</b></li>
@@ -171,18 +171,22 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
   }
   .pj-title {
     font-size: clamp(2.4rem, 5.6vw, 4.8rem);
-    font-weight: 320;
+    font-weight: 400;
     line-height: 1;
     letter-spacing: -0.02em;
     margin-top: 0.7rem;
   }
-  /* Второй заголовок проекта. Был мелким и плохо читался — по замечанию Ольги
-     укрупнён и слегка притемнён. */
+  /* Второй заголовок проекта. Был мелким курсивом другой гарнитуры и плохо
+     читался (замечание Ольги): теперь та же гарнитура, что и у названия, —
+     отличается только размером и цветом. */
   .pj-tagline {
-    max-width: 34ch;
-    margin-top: 1.1rem;
-    font-size: clamp(1.35rem, 2.4vw, 1.85rem);
-    line-height: 1.35;
+    font-family: var(--f-display);
+    max-width: 30ch;
+    margin-top: 1.2rem;
+    font-size: clamp(1.5rem, 2.7vw, 2.1rem);
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
     color: var(--c-accent-deep);
   }
   .pj-facts {
@@ -199,15 +203,16 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
     gap: 0.3rem;
   }
   .pj-facts span {
-    font-size: 0.68rem;
+    font-size: 0.74rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--c-ink-soft);
   }
+  /* Значения — тем же шрифтом, что и весь текст: раньше здесь была третья
+     гарнитура и блок выглядел разношёрстным (замечание Ольги) */
   .pj-facts b {
-    font-family: var(--f-display);
-    font-size: 1.4rem;
-    font-weight: 400;
+    font-size: 1.1rem;
+    font-weight: 600;
     white-space: nowrap; /* «350 м²» не должно ломаться на две строки */
   }
 
@@ -247,12 +252,12 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
     line-height: 1.7;
     color: var(--c-ink-soft);
   }
-  /* Первый абзац — крупнее, как вводка */
+  /* Вводка отличается только размером и цветом — гарнитура та же, что у
+     остальных абзацев (замечание Ольги «уровнять в единый») */
   .pj-story-p.is-lead {
-    font-family: var(--f-display);
-    font-size: clamp(1.35rem, 2.6vw, 2rem);
-    font-weight: 330;
-    line-height: 1.32;
+    font-size: clamp(1.15rem, 1.9vw, 1.35rem);
+    font-weight: 500;
+    line-height: 1.55;
     color: var(--c-ink);
   }
   .pj-story-head {
@@ -450,7 +455,7 @@ const title = `${project.title} — ${project.category}, ${project.area} м² | 
   }
   .pj-next-title {
     font-size: clamp(2.4rem, 6vw, 5rem);
-    font-weight: 340;
+    font-weight: 400;
   }
   .pj-next-title .arr {
     display: inline-block;

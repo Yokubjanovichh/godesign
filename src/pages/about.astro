@@ -6,11 +6,29 @@ import { getOlgaPhotos } from '../data/projects';
 const photos = getOlgaPhotos();
 const portrait = photos[0];
 const secondary = photos.slice(1, 4);
+
+/** Текст Ольги целиком — из файла «коменты.pptx», слайд 2. */
+const disciplines = [
+  {
+    t: 'Юридическое образование — Московский университет МВД РФ',
+    d: 'дало мне системность в управлении, внимание к деталям, умение работать с документацией и управлять рисками.',
+  },
+  {
+    t: 'Опыт работы в строительстве с 2007 года',
+    d: 'позволил глубоко понять техническую сторону вопроса и разбираться в деталях реализации.',
+  },
+];
+
+const facts = [
+  { n: '20 лет', d: 'дизайн — неотъемлемая часть моей жизни' },
+  { n: 'с 2007', d: 'опыт работы в строительстве' },
+  { n: '2019', d: 'Британская высшая школа дизайна' },
+];
 ---
 
 <Base
   title="Об авторе — Ольга Горчакова, дизайнер интерьера"
-  description="Ольга Горчакова — дизайнер-декоратор интерьера. Юридическое образование и Британская высшая школа дизайна. Продуманные и живые интерьеры."
+  description="Ольга Горчакова — дизайнер интерьера. 20 лет в дизайне, юридическое образование, опыт в строительстве с 2007 года и Британская высшая школа дизайна."
 >
   <section class="about-hero">
     <div class="container about-hero-grid">
@@ -38,74 +56,88 @@ const secondary = photos.slice(1, 4);
 
   <section class="about-story">
     <div class="container about-story-grid">
-      <h2 class="eyebrow reveal">Путь</h2>
+      <h2 class="eyebrow reveal">О себе</h2>
       <div class="about-story-body">
         <p class="about-lead reveal" data-delay="1">
-          Мой профессиональный путь — это уникальное сочетание рационального и
-          творческого начал.
+          Приветствую вас на своём сайте! Возможно, у нас есть общие знакомые
+          или вы пришли по рекомендации. В любом случае — добро пожаловать!
         </p>
         <p class="reveal" data-delay="1">
-          Первое высшее образование — юридическое, «Московский университет МВД
-          РФ». Это дало мне особый склад ума: дисциплину, внимание к деталям,
-          умение работать с документацией и предвидеть риски.
+          Дизайн для меня не просто профессия, а образ жизни. С раннего детства
+          я была погружена в творческий процесс: постоянно что-то создавала,
+          экспериментировала с пространством, искала новые решения. Уже на
+          протяжении 20 лет дизайн является неотъемлемой частью моей жизни.
         </p>
-        <p class="reveal" data-delay="1">
-          В дизайне это помогает выстраивать прозрачные отношения с клиентами,
-          грамотно составлять договоры, контролировать юридическую чистоту
-          согласований и защищать интересы заказчика на всех этапах.
-        </p>
+
+        <h3 class="about-sub reveal" data-delay="1">
+          Моя работа строится на сочетании двух дисциплин
+        </h3>
+        <dl class="about-dl reveal" data-delay="1">
+          {
+            disciplines.map((x) => (
+              <>
+                <dt>{x.t}</dt>
+                <dd>{x.d}</dd>
+              </>
+            ))
+          }
+        </dl>
+
         <p class="reveal" data-delay="2">
-          Второе высшее образование — «Британская высшая школа дизайна».
-          Обучение там открыло мне мир современной эстетики, композиции, стиля и
-          работы с пространством на уровне мировых стандартов. Здесь я научилась
-          создавать не просто красивые интерьеры, а продуманные, функциональные
-          и актуальные решения.
+          Однако творческая составляющая всегда требовала отдельного развития.
+          Поэтому в 2019 году я поступила в Британскую высшую школу дизайна.
+          Здесь открылся для меня мир современной эстетики, композиции и работы
+          с пространством. Обучение позволило научиться создавать не просто
+          красивые интерьеры, а продуманные, функциональные и гармоничные
+          решения под ваши индивидуальные задачи.
+        </p>
+
+        <p class="about-principle reveal" data-delay="2">
+          Главный принцип моей работы — дизайн должен быть реализован.
+        </p>
+
+        <p class="reveal" data-delay="2">
+          Дизайнер выступает главным звеном между вами и строителями. Моя
+          задача — перевести ваше видение в чёткие чертежи и смету так, чтобы
+          все участники процесса двигались к одной цели. При таком подходе мы
+          получаем продукт высокого качества с чётким пониманием бюджета и
+          сроков на каждом этапе взаимодействия.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Ценности -->
-  <section class="about-values">
+  <section class="about-facts">
     <div class="container">
-      <h2 class="visually-hidden">Принципы работы</h2>
-      <div class="values-grid">
-        <div class="value reveal">
-          <span class="value-num serif">01</span>
-          <h3>Рациональность</h3>
-          <p>Юридическая база — это дисциплина, договоры и защита ваших интересов на каждом этапе.</p>
-        </div>
-        <div class="value reveal" data-delay="1">
-          <span class="value-num serif">02</span>
-          <h3>Эстетика</h3>
-          <p>Британская школа дизайна — композиция, стиль и работа с пространством мирового уровня.</p>
-        </div>
-        <div class="value reveal" data-delay="2">
-          <span class="value-num serif">03</span>
-          <h3>Индивидуальность</h3>
-          <p>Интерьер как отражение владельца — продуманный под реальные сценарии жизни.</p>
-        </div>
+      <h2 class="visually-hidden">Опыт и образование</h2>
+      <div class="facts-grid">
+        {
+          facts.map((f, i) => (
+            <div class="fact reveal" data-delay={String(i)}>
+              <span class="fact-n">{f.n}</span>
+              <p class="fact-d">{f.d}</p>
+            </div>
+          ))
+        }
       </div>
     </div>
   </section>
 
-  <!-- Галерея портретов -->
+  <!-- Галерея портретов: три кадра на одной линии (просьба Ольги) -->
   {
     secondary.length > 0 && (
       <section class="about-gallery">
         <div class="container about-gallery-grid">
           {secondary.map((img, i) => (
-            <div class:list={['about-shot', i === 1 ? 'is-tall' : '']}>
+            <div class="about-shot">
               <div class="about-shot-frame">
-                <div class="about-shot-move" data-shot-img>
-                  <Image
-                    src={img}
-                    alt={`Ольга Горчакова ${i + 2}`}
-                    widths={[420, 640, 820]}
-                    sizes="(max-width: 760px) 90vw, 32vw"
-                    class="about-shot-img"
-                  />
-                </div>
+                <Image
+                  src={img}
+                  alt={`Ольга Горчакова ${i + 2}`}
+                  widths={[420, 640, 820]}
+                  sizes="(max-width: 760px) 31vw, 32vw"
+                  class="about-shot-img"
+                />
               </div>
             </div>
           ))}
@@ -128,7 +160,7 @@ const secondary = photos.slice(1, 4);
   }
   .about-name {
     font-size: clamp(3rem, 8vw, 7rem);
-    font-weight: 320;
+    font-weight: 400;
     line-height: 0.98;
     margin-top: 1rem;
   }
@@ -148,7 +180,6 @@ const secondary = photos.slice(1, 4);
   .about-portrait-move {
     position: absolute;
     inset: 0;
-    will-change: transform;
   }
   .about-portrait-img {
     width: 100%;
@@ -166,51 +197,80 @@ const secondary = photos.slice(1, 4);
     align-items: start;
   }
   .about-story-body {
-    max-width: 60ch;
+    max-width: 62ch;
     display: flex;
     flex-direction: column;
-    gap: 1.4rem;
+    gap: 1.3rem;
     color: var(--c-ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.7;
   }
+  /* Вводка отличается размером и цветом, гарнитура — общая для всего текста */
   .about-lead {
-    font-family: var(--f-display);
-    font-size: clamp(1.4rem, 2.8vw, 2.1rem);
-    font-weight: 330;
-    line-height: 1.3;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.5;
     color: var(--c-ink);
   }
-
-  .about-values {
-    padding-block: clamp(2rem, 5vw, 4rem);
+  .about-sub {
+    font-family: var(--f-display);
+    font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+    font-weight: 400;
+    color: var(--c-accent-deep);
+    margin-top: 0.6rem;
   }
-  .values-grid {
+  .about-dl dt {
+    margin-top: 1.1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-ink);
+  }
+  .about-dl dd {
+    margin-top: 0.25rem;
+  }
+  .about-principle {
+    font-family: var(--f-display);
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--c-ink);
+    padding-left: clamp(1rem, 2vw, 1.6rem);
+    border-left: 2px solid var(--c-accent);
+    margin-block: 0.6rem;
+  }
+
+  /* --- Факты --- */
+  .about-facts {
+    padding-block: clamp(1rem, 3vw, 2rem);
+  }
+  .facts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: clamp(1.5rem, 4vw, 3rem);
     border-top: 1px solid var(--c-line);
     padding-top: clamp(2rem, 4vw, 3rem);
   }
-  .value-num {
-    font-size: 1.2rem;
+  .fact-n {
+    font-family: var(--f-display);
+    font-size: clamp(2rem, 4vw, 3rem);
     color: var(--c-accent);
+    line-height: 1;
   }
-  .value h3 {
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin: 1rem 0 0.7rem;
-  }
-  .value p {
+  .fact-d {
+    margin-top: 0.7rem;
     color: var(--c-ink-soft);
-    font-size: 0.98rem;
+    font-size: 1rem;
   }
 
   .about-gallery {
     padding-block: clamp(3rem, 7vw, 6rem);
   }
+  /* Три кадра на одной линии — и на десктопе, и на планшете, и на телефоне
+     (просьба Ольги: «разместить три фото на одной линии») */
   .about-gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: clamp(1.2rem, 2.5vw, 2rem);
+    gap: clamp(0.6rem, 2vw, 2rem);
     align-items: start;
   }
   .about-shot-frame {
@@ -220,15 +280,6 @@ const secondary = photos.slice(1, 4);
     /* Натуральные пропорции (2:3) — фигура целиком, без обрезки ног */
     aspect-ratio: 2 / 3;
     background: var(--c-bg-warm);
-  }
-  /* Три портрета на одном уровне (по замечанию Ольги) — без ступенчатого сдвига */
-  .about-shot.is-tall {
-    margin-top: 0;
-  }
-  .about-shot-move {
-    position: absolute;
-    inset: 0;
-    will-change: transform;
   }
   .about-shot-img {
     width: 100%;
@@ -244,15 +295,9 @@ const secondary = photos.slice(1, 4);
     .about-portrait {
       max-width: 420px;
     }
-    .values-grid {
+    .facts-grid {
       grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-    .about-gallery-grid {
-      grid-template-columns: 1fr 1fr;
+      gap: 1.6rem;
     }
   }
 </style>
-
-<!-- Параллакс убран: кадры показываются целиком (натуральные пропорции 2:3),
-     чтобы ноги не обрезались (по замечанию Ольги). -->

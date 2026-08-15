@@ -48,7 +48,7 @@ const tall = await getImage({
 
   <div class="container hero-inner">
     <p class="hero-eyebrow" data-hero-fade>
-      <span class="dot"></span>Дизайн интерьера — Москва
+      <span class="dot"></span>Дизайн интерьера — Москва и МО
     </p>
 
     <h1 class="hero-title">
@@ -80,35 +80,6 @@ const tall = await getImage({
     overflow: hidden;
     color: #f6efe4;
   }
-  /* Вертикальный экран (телефон, планшет книжкой): высота подстраивается под
-     пропорции самого снимка, а не под весь экран. Иначе от комнаты оставалась
-     узкая полоса по центру — на это и жаловалась Ольга. */
-  @media (max-aspect-ratio: 4/3) {
-    .hero {
-      height: auto;
-      aspect-ratio: 3 / 4;
-      max-height: 94svh;
-      min-height: 30rem;
-    }
-    /* без запаса под параллакс — кадр показываем целиком */
-    .hero-img-scale {
-      inset: 0;
-    }
-    /* Текст на вертикальном экране лежит внизу — там вуаль и делаем плотнее,
-       а верх кадра оставляем светлым */
-    .hero-veil {
-      background:
-        linear-gradient(
-          to top,
-          rgba(28, 18, 9, 0.8) 0%,
-          rgba(28, 18, 9, 0.46) 34%,
-          rgba(28, 18, 9, 0.14) 62%,
-          transparent 86%
-        ),
-        linear-gradient(100deg, rgba(28, 18, 9, 0.42) 0%, rgba(28, 18, 9, 0.14) 45%, transparent 75%);
-    }
-  }
-
   /* --- Медиа --- */
   .hero-media {
     position: absolute;
@@ -137,6 +108,41 @@ const tall = await getImage({
   @media (min-width: 768px) {
     .hero-img {
       object-position: center center;
+    }
+  }
+
+  /* Вертикальный экран (телефон, планшет книжкой): высота задаётся
+     пропорциями самого снимка, а не экраном, — комната видна целиком.
+     Блок идёт ПОСЛЕ .hero-img-scale: у равной специфичности побеждает
+     последнее правило, иначе inset: -2 % возвращал обрезку по краям. */
+  @media (max-aspect-ratio: 4/3) {
+    .hero {
+      height: auto;
+      /* ровно пропорции semeyny-tall.webp (1560×2000) — при object-fit: cover
+         это значит «ни одного срезанного пикселя» */
+      aspect-ratio: 39 / 50;
+      max-height: 94svh;
+      min-height: 30rem;
+    }
+    /* без запаса под параллакс — кадр показываем целиком */
+    .hero-img-scale {
+      inset: 0;
+    }
+    .hero-img {
+      object-position: center center;
+    }
+    /* Текст на вертикальном экране лежит внизу — там вуаль и делаем плотнее,
+       а верх кадра оставляем светлым */
+    .hero-veil {
+      background:
+        linear-gradient(
+          to top,
+          rgba(28, 18, 9, 0.72) 0%,
+          rgba(28, 18, 9, 0.36) 34%,
+          rgba(28, 18, 9, 0.1) 62%,
+          transparent 86%
+        ),
+        linear-gradient(100deg, rgba(28, 18, 9, 0.34) 0%, rgba(28, 18, 9, 0.1) 45%, transparent 75%);
     }
   }
   /* Тёплая вуаль: плотнее слева-снизу, где лежит текст, и почти прозрачная
@@ -181,12 +187,13 @@ const tall = await getImage({
       0 2px 34px rgba(26, 16, 8, 0.5);
   }
   .hero-eyebrow {
-    display: inline-flex;
+    display: flex;
+    flex-wrap: wrap; /* «— Москва и МО» на узком экране переносится, а не режется */
     align-items: center;
     gap: 0.7rem;
-    font-size: 0.74rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     margin-bottom: clamp(1.5rem, 3vw, 2.4rem);
   }
@@ -200,7 +207,7 @@ const tall = await getImage({
 
   .hero-title {
     font-family: var(--f-display);
-    font-weight: 300;
+    font-weight: 400;
     font-size: clamp(2.5rem, 7.4vw, 7rem);
     line-height: 0.96;
     letter-spacing: -0.03em;
@@ -319,19 +326,22 @@ const tall = await getImage({
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) return;
 
-    // Вступительная кинематографичная анимация
+    // Вступительная кинематографичная анимация. На вертикальном экране
+    // наплыв делаем едва заметным: при 1.45 первые пару секунд от комнаты
+    // видна только середина — именно на это жаловалась Ольга.
+    const wide = window.matchMedia('(min-aspect-ratio: 4/3)').matches;
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
     tl.set('[data-hero-clip]', { clipPath: 'inset(0 0 100% 0)' })
       .set('[data-hero-word]', { yPercent: 118 })
       .set('[data-hero-fade]', { autoAlpha: 0, y: 24 })
       .to('[data-hero-clip]', { clipPath: 'inset(0 0 0% 0)', duration: 1.5, ease: 'expo.inOut' }, 0.1)
-      .from('[data-hero-img]', { scale: 1.45, duration: 2, ease: 'expo.out' }, 0.1)
+      .from('[data-hero-img]', { scale: wide ? 1.45 : 1.06, duration: 2, ease: 'expo.out' }, 0.1)
       .to('[data-hero-word]', { yPercent: 0, duration: 1.15, stagger: 0.09 }, 0.55)
       .to('[data-hero-fade]', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 1.0);
 
     // Приближение и параллакс кадра — только на широком экране. На вертикальном
     // они бы снова подрезали снимок, а он там показан целиком.
-    if (window.matchMedia('(min-aspect-ratio: 4/3)').matches) {
+    if (wide) {
       // Медленный Ken Burns после входа. Держим приближение слабым: при 1.12
       // с горизонтального кадра «съедалась» вся мебель, оставалась одна панель.
       gsap.to('[data-hero-img]', {

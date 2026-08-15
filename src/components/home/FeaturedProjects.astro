@@ -22,16 +22,14 @@ import { link } from '../../utils/link';
             class="proj-card"
             data-cursor="view"
           >
-            <div class="proj-frame" data-proj-frame>
-              <div class="proj-img-move" data-proj-img>
-                <Image
-                  src={getCover(p.slug)}
-                  alt={`${p.title} — ${p.category}, ${p.area} м²`}
-                  widths={[440, 680, 900, 1160]}
-                  sizes="(max-width: 1024px) 92vw, 46vw"
-                  class="proj-img"
-                />
-              </div>
+            <div class="proj-frame">
+              <Image
+                src={getCover(p.slug)}
+                alt={`${p.title} — ${p.category}, ${p.area} м²`}
+                widths={[440, 680, 900, 1160]}
+                sizes="(max-width: 1024px) 92vw, 46vw"
+                class="proj-img"
+              />
             </div>
             <div class="proj-info">
               <span class="proj-loc">
@@ -94,25 +92,29 @@ import { link } from '../../utils/link';
     gap: clamp(2rem, 4vw, 3.4rem) clamp(1.5rem, 3vw, 2.6rem);
   }
   .proj-card {
-    display: block;
+    display: grid;
+    grid-template-rows: auto auto;
+  }
+  /* Кадры разной формы — подписи всё равно выстраиваются по одной линии */
+  @supports (grid-template-rows: subgrid) {
+    .proj-card {
+      grid-row: span 2;
+      grid-template-rows: subgrid;
+    }
   }
   .proj-frame {
     position: relative;
     overflow: hidden;
     border-radius: var(--radius);
     background: var(--c-bg-warm);
-    /* Квадрат — как на сайте Ольги (заглавные кадры разной ориентации) */
-    aspect-ratio: 1 / 1;
+    align-self: start;
   }
-  .proj-img-move {
-    position: absolute;
-    inset: -12% 0;
-    will-change: transform;
-  }
+  /* Кадр целиком, в натуральных пропорциях: квадрат срезал у горизонтальных
+     снимков четверть комнаты (замечание Ольги «чтобы видели») */
   .proj-img {
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
     transition: transform 1.2s var(--ease-out);
   }
   .proj-card:hover .proj-img {
@@ -155,44 +157,5 @@ import { link } from '../../utils/link';
   }
 </style>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  gsap.registerPlugin(ScrollTrigger);
-
-  function initFeatured() {
-    const section = document.querySelector<HTMLElement>('[data-featured]');
-    if (!section || section.dataset.ftReady) return;
-    section.dataset.ftReady = '1';
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    // Появление кадра — clip-path раскрытие
-    section.querySelectorAll<HTMLElement>('[data-proj-frame]').forEach((frame) => {
-      gsap.fromTo(
-        frame,
-        { clipPath: 'inset(10% 6% 10% 6% round 4px)' },
-        {
-          clipPath: 'inset(0% 0% 0% 0% round 4px)',
-          ease: 'none',
-          scrollTrigger: { trigger: frame, start: 'top 92%', end: 'top 55%', scrub: 0.6 },
-        }
-      );
-    });
-
-    // Параллакс фотографии внутри кадра
-    section.querySelectorAll<HTMLElement>('[data-proj-img]').forEach((img) => {
-      gsap.fromTo(
-        img,
-        { yPercent: -7 },
-        {
-          yPercent: 7,
-          ease: 'none',
-          scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true },
-        }
-      );
-    });
-  }
-
-  initFeatured();
-  document.addEventListener('astro:page-load', initFeatured);
-</script>
+<!-- Анимации кадра убраны: и clip-path-раскрытие, и параллакс держат снимок
+     подрезанным по краям, а обложки должны быть видны целиком (просьба Ольги). -->
