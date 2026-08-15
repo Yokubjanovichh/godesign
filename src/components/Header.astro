@@ -164,9 +164,10 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
   }
   .brand-sub {
     font-family: var(--f-body);
-    font-size: 0.6rem;
+    /* было 0.6rem — на планшете подпись почти не читалась */
+    font-size: 0.66rem;
     font-weight: 600;
-    letter-spacing: 0.34em;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--c-ink-soft);
     margin-top: 0.35rem;

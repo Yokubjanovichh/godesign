@@ -24,7 +24,10 @@ const tall = await getImage({
   <div class="hero-media" data-hero-clip>
     <div class="hero-img-scale" data-hero-img>
       <picture>
-        <source media="(min-width: 768px)" srcset={wide.srcSet.attribute} sizes="100vw" />
+        <!-- Горизонтальный кадр — только когда экран действительно широкий.
+             По ширине выбирать нельзя: у планшета книжкой ширина 820 px, но
+             экран вытянут вверх, и широкий кадр обрезался в узкую полосу. -->
+        <source media="(min-aspect-ratio: 4/3)" srcset={wide.srcSet.attribute} sizes="100vw" />
         <img
           src={tall.src}
           srcset={tall.srcSet.attribute}
@@ -76,6 +79,34 @@ const tall = await getImage({
     min-height: 40rem;
     overflow: hidden;
     color: #f6efe4;
+  }
+  /* Вертикальный экран (телефон, планшет книжкой): высота подстраивается под
+     пропорции самого снимка, а не под весь экран. Иначе от комнаты оставалась
+     узкая полоса по центру — на это и жаловалась Ольга. */
+  @media (max-aspect-ratio: 4/3) {
+    .hero {
+      height: auto;
+      aspect-ratio: 3 / 4;
+      max-height: 94svh;
+      min-height: 30rem;
+    }
+    /* без запаса под параллакс — кадр показываем целиком */
+    .hero-img-scale {
+      inset: 0;
+    }
+    /* Текст на вертикальном экране лежит внизу — там вуаль и делаем плотнее,
+       а верх кадра оставляем светлым */
+    .hero-veil {
+      background:
+        linear-gradient(
+          to top,
+          rgba(28, 18, 9, 0.8) 0%,
+          rgba(28, 18, 9, 0.46) 34%,
+          rgba(28, 18, 9, 0.14) 62%,
+          transparent 86%
+        ),
+        linear-gradient(100deg, rgba(28, 18, 9, 0.42) 0%, rgba(28, 18, 9, 0.14) 45%, transparent 75%);
+    }
   }
 
   /* --- Медиа --- */
@@ -298,21 +329,25 @@ const tall = await getImage({
       .to('[data-hero-word]', { yPercent: 0, duration: 1.15, stagger: 0.09 }, 0.55)
       .to('[data-hero-fade]', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 1.0);
 
-    // Медленный Ken Burns после входа. Держим приближение слабым: при 1.12
-    // с горизонтального кадра «съедалась» вся мебель, оставалась одна панель.
-    gsap.to('[data-hero-img]', {
-      scale: 1.05,
-      duration: 20,
-      ease: 'none',
-      delay: 2,
-    });
+    // Приближение и параллакс кадра — только на широком экране. На вертикальном
+    // они бы снова подрезали снимок, а он там показан целиком.
+    if (window.matchMedia('(min-aspect-ratio: 4/3)').matches) {
+      // Медленный Ken Burns после входа. Держим приближение слабым: при 1.12
+      // с горизонтального кадра «съедалась» вся мебель, оставалась одна панель.
+      gsap.to('[data-hero-img]', {
+        scale: 1.05,
+        duration: 20,
+        ease: 'none',
+        delay: 2,
+      });
 
-    // Параллакс при скролле
-    gsap.to('[data-hero-img]', {
-      yPercent: 16,
-      ease: 'none',
-      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-    });
+      gsap.to('[data-hero-img]', {
+        yPercent: 16,
+        ease: 'none',
+        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
+      });
+    }
+
     gsap.to('.hero-inner', {
       yPercent: -12,
       autoAlpha: 0.4,

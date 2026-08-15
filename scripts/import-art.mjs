@@ -1,22 +1,23 @@
 /**
- * Арт-объекты Ольги — изображения с ongorchakova-design.ru/art-obekt.
- * Исходники выгружены в go-design-demo/art/a1..a7 → src/assets/art/<slug>.webp.
+ * Арт-объекты Ольги. Раньше картинки снимались с её сайта — там были коллажи
+ * в 380 px. В августе Ольга прислала отдельные снимки в хорошем качестве
+ * (архив «АРТ»), их и берём: по одному кадру на объект.
  */
 import sharp from 'sharp';
 import { mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-const SRC = 'C:/Users/admin/Desktop/go-design-demo/art';
+const SRC = 'C:/Users/admin/Desktop/go-design-demo/art-new/АРТ';
 const DEST = 'C:/Users/admin/Desktop/godesign/src/assets/art';
 
 const ITEMS = [
-  ['a1.jpg', 'metal-kartina'],
-  ['a2.png', 'panno-ryab'],
-  ['a3.jpg', 'teksturnaya-kartina'],
-  ['a4.png', 'keramika-seaweed'],
-  ['a5.png', 'keramika-basho'],
-  ['a6.png', 'keramika-kurosy'],
-  ['a7.png', 'kartina-pechat'],
+  ['IMG_20260603_164109.png', 'panno-ryab'], // панно «Рябь на воде»
+  ['d6a2bfc357cb43011a62a5cb11f9f130.jpg', 'metal-kartina'], // металлизированная картина
+  ['текстурная картина.jpg', 'teksturnaya-kartina'],
+  ['IMG_20260815_095815.png', 'keramika-seaweed'], // Seaweed — бирюзовая драпировка
+  ['IMG_20260815_095802.png', 'keramika-basho'], // «Старый пруд» — квадратная чаша
+  ['IMG_20260815_095823.png', 'keramika-kurosy'], // куросы, зелёная глазурь
+  ['картина.jpg', 'kartina-pechat'], // интерьерная картина, печать
 ];
 
 if (!existsSync(DEST)) mkdirSync(DEST, { recursive: true });

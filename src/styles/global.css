@@ -158,6 +158,13 @@ p {
   text-transform: uppercase;
   color: var(--c-accent);
 }
+/* На планшете и телефоне надзаголовки были слишком мелкими (замечание Ольги) */
+@media (max-width: 1024px), (pointer: coarse) {
+  .eyebrow {
+    font-size: 0.82rem;
+    letter-spacing: 0.2em;
+  }
+}
 .serif {
   font-family: var(--f-serif);
 }
