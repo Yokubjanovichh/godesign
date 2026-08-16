@@ -10,7 +10,8 @@
     "build": "astro build && node scripts/prune-orphan-assets.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "node scripts/deploy-ftp.mjs"
+    "deploy": "node scripts/deploy-ftp.mjs",
+    "publish": "npm run build && npm run deploy"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
