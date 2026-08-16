@@ -15,6 +15,12 @@
 # --- Своя страница 404 -------------------------------------------------
 ErrorDocument 404 /404.html
 
+# --- Служебное наружу не отдаём ---------------------------------------
+# Файл состояния выгрузки лежит в корне сайта — посторонним он ни к чему
+<FilesMatch "^\.deploy-state\.json$">
+  Require all denied
+</FilesMatch>
+
 # --- Сжатие ------------------------------------------------------------
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml

@@ -1,0 +1,73 @@
+# Собираем сайт на GitHub и выкладываем на хостинг reg.ru.
+#
+# Почему нельзя просто «подключить хостинг к GitHub»: на тарифе Host-A нет SSH,
+# и на сервере нет Node — значит, ни `git pull` там сделать нечем, ни собрать
+# сайт негде. Поэтому сборка идёт здесь, а на хостинг уезжает только dist.
+#
+# Что нужно один раз завести в Settings → Secrets and variables → Actions:
+#   FTP_HOST, FTP_USER, FTP_PASSWORD  — доступы FTP-пользователя с хостинга
+#   FTP_DIR                           — папка сайта, БЕЗ косой черты в конце
+#   PUBLIC_TG_TOKEN, PUBLIC_TG_CHAT_ID — иначе форма перестанет писать в Telegram
+
+name: Сборка и выгрузка на хостинг
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch: # ручной запуск кнопкой во вкладке Actions
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # secrets нельзя читать прямо в if — прокидываем их в env
+    env:
+      FTP_HOST: ${{ secrets.FTP_HOST }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Кэш пережатых картинок. Их около 900; без кэша каждая сборка гоняет
+      # sharp по всем заново. Восстанавливаем ПОСЛЕ npm ci — он чистит
+      # node_modules целиком. По restore-keys подхватывается прошлый кэш,
+      # и пережимаются только новые кадры.
+      - uses: actions/cache@v4
+        with:
+          path: node_modules/.astro
+          key: astro-images-${{ hashFiles('src/assets/**') }}
+          restore-keys: astro-images-
+
+      - name: Сборка
+        env:
+          PUBLIC_TG_TOKEN: ${{ secrets.PUBLIC_TG_TOKEN }}
+          PUBLIC_TG_CHAT_ID: ${{ secrets.PUBLIC_TG_CHAT_ID }}
+        run: npm run build
+
+      # Пока доступы не заведены, шаг пропускается: вкладка Actions не краснеет
+      - name: Выгрузка на хостинг
+        if: env.FTP_HOST != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # если хостинг не пустит по FTPS — поменять на ftp
+          protocol: ftps
+          local-dir: ./dist/
+          server-dir: ${{ secrets.FTP_DIR }}/
+          # список залитого хранится на сервере: уходят только изменившиеся файлы
+          state-name: .deploy-state.json
+
+      - name: Доступы ещё не заведены
+        if: env.FTP_HOST == ''
+        run: echo "Сборка прошла. Выгрузка пропущена — не заданы секреты FTP_*."
