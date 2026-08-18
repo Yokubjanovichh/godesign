@@ -59,6 +59,10 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* Страховка от горизонтальной прокрутки: одного overflow-x у body мало —
+     если элемент вылезет за край, полосу покажет уже html. clip, а не
+     hidden: hidden на html ломает position: sticky внутри страницы. */
+  overflow-x: clip;
 }
 
 /* Lenis smooth scroll */

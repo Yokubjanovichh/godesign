@@ -300,4 +300,16 @@ const facts = [
       gap: 1.6rem;
     }
   }
+
+  /* Три кадра в ряд Ольга просила глядя на планшет. На телефоне ряд из трёх
+     даёт портреты по 105 px — лица уже не разобрать, поэтому там колонка. */
+  @media (max-width: 560px) {
+    .about-gallery-grid {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+    .about-shot-frame {
+      aspect-ratio: 3 / 4;
+    }
+  }
 </style>

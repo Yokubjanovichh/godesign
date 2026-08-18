@@ -71,9 +71,18 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
   }
   .site-header.scrolled {
     padding-block: 0.85rem;
-    background: color-mix(in srgb, var(--c-bg) 82%, transparent);
+    background: color-mix(in srgb, var(--c-bg) 92%, transparent);
     backdrop-filter: blur(14px);
     box-shadow: 0 1px 0 var(--c-line);
+  }
+  /* На телефоне шапка занимает заметную долю экрана, и сквозь неё
+     просвечивали строки текста — казалось, что заголовок обрезан.
+     Там делаем фон непрозрачным. */
+  @media (max-width: 640px) {
+    .site-header.scrolled {
+      background: var(--c-bg);
+      backdrop-filter: none;
+    }
   }
 
   /* Прозрачный вариант — поверх полноэкранного героя */
