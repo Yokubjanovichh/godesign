@@ -126,6 +126,11 @@ const accentWords = new Set(['пространство', 'под', 'себя.'])
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    // На телефоне цитата занимает почти весь экран: пока последние слова
+    // догорают до полной яркости, начало фразы уже ушло вверх — читатель
+    // видит блёклый «недописанный» текст. Там показываем всё сразу.
+    if (window.matchMedia('(max-width: 640px)').matches) return;
+
     gsap.fromTo(
       words,
       { opacity: 0.16 },
