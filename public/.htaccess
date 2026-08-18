@@ -1,12 +1,13 @@
 # Настройки для Apache-хостинга (reg.ru). Astro собирает статику, поэтому
 # серверу нужно только правильно её отдавать.
 
-# --- Только https и без www -------------------------------------------
+# --- Без www ----------------------------------------------------------
+# Переадресацию http → https здесь НЕ делаем: Apache стоит за nginx и не
+# видит %{HTTPS} = on, из-за чего https-запросы уходили в бесконечный
+# редирект сами на себя. Включаем её на стороне сервера (ispmanager →
+# Sites → «Redirect to HTTPS»).
 <IfModule mod_rewrite.c>
   RewriteEngine On
-
-  RewriteCond %{HTTPS} !=on
-  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
   RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
   RewriteRule ^(.*)$ https://%1/$1 [R=301,L]

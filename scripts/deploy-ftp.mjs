@@ -88,11 +88,17 @@ if (!changed.length && !(PRUNE && gone.length)) {
 }
 
 // --- выгрузка -----------------------------------------------------------
-const client = new Client(30_000);
-client.ftp.verbose = false;
+/**
+ * Хостинг рвёт пассивное соединение примерно на двухсотом файле
+ * («Can't open data connection in passive mode»). Поэтому подключение
+ * одноразовое: оборвалось — переподключаемся и продолжаем с того же места.
+ */
+let client = null;
 
-try {
-  // secure: true — FTPS, если хостинг его поддерживает; иначе обычный FTP
+async function connect() {
+  client?.close();
+  client = new Client(60_000);
+  client.ftp.verbose = false;
   try {
     await client.access({
       host: FTP_HOST,
@@ -101,30 +107,48 @@ try {
       secure: true,
       secureOptions: { rejectUnauthorized: false },
     });
-    console.log('Подключились по FTPS.');
+    return 'FTPS';
   } catch {
     await client.access({ host: FTP_HOST, user: FTP_USER, password: FTP_PASSWORD });
-    console.log('Подключились по FTP (без TLS).');
+    return 'FTP';
   }
+}
 
+const done = { ...prev };
+const madeDirs = new Set();
+let uploaded = 0;
+let reconnects = 0;
+
+try {
+  console.log(`Подключились по ${await connect()}.`);
   await client.ensureDir(FTP_DIR);
-
-  const done = { ...prev };
-  let i = 0;
-  const madeDirs = new Set();
 
   for (const f of changed) {
     const remote = posix.join(FTP_DIR, f.rel);
     const remoteDir = posix.dirname(remote);
-    if (!madeDirs.has(remoteDir)) {
-      await client.ensureDir(remoteDir);
-      madeDirs.add(remoteDir);
+
+    for (let attempt = 1; ; attempt++) {
+      try {
+        if (!madeDirs.has(remoteDir)) {
+          await client.ensureDir(remoteDir);
+          madeDirs.add(remoteDir);
+        }
+        await client.uploadFrom(f.full, remote);
+        break;
+      } catch (err) {
+        if (attempt >= 4) throw err;
+        reconnects += 1;
+        madeDirs.clear(); // после реконнекта каталог снова надо «нащупать»
+        writeFileSync(MANIFEST, JSON.stringify(done, null, 0));
+        await new Promise((r) => setTimeout(r, 1500 * attempt));
+        await connect();
+      }
     }
-    await client.uploadFrom(f.full, remote);
+
     done[f.rel] = f.hash;
-    i += 1;
-    if (i % 25 === 0 || i === changed.length) {
-      console.log(`  ${i}/${changed.length}`);
+    uploaded += 1;
+    if (uploaded % 25 === 0 || uploaded === changed.length) {
+      console.log(`  ${uploaded}/${changed.length}`);
       // манифест пишем по ходу: обрыв связи не заставит заливать всё заново
       writeFileSync(MANIFEST, JSON.stringify(done, null, 0));
     }
@@ -143,10 +167,12 @@ try {
   }
 
   writeFileSync(MANIFEST, JSON.stringify(done, null, 0));
-  console.log('Готово.');
+  console.log(`Готово${reconnects ? `, переподключений: ${reconnects}` : ''}.`);
 } catch (err) {
-  console.error('Ошибка выгрузки:', err.message);
+  writeFileSync(MANIFEST, JSON.stringify(done, null, 0));
+  console.error(`Ошибка выгрузки после ${uploaded} файлов:`, err.message);
+  console.error('Запустите `npm run deploy` ещё раз — продолжит с этого места.');
   process.exitCode = 1;
 } finally {
-  client.close();
+  client?.close();
 }

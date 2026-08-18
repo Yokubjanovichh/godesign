@@ -4,9 +4,10 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Render Static Site (сборка на сервере Render, открывается в России;
-  // Netlify/Vercel/Cloudflare заблокированы, у Surge падает CLI-загрузка)
-  site: 'https://godesign-bakx.onrender.com',
+  // Российский хостинг reg.ru (Host-A). Зарубежные площадки не подошли:
+  // Netlify/Vercel/Cloudflare заблокированы, а Render у Ольги открывался
+  // только через VPN.
+  site: 'https://ongorchakova-design.ru',
   integrations: [sitemap()],
   prefetch: {
     prefetchAll: true,
