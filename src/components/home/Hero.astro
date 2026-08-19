@@ -132,17 +132,20 @@ const tall = await getImage({
       object-position: center center;
     }
     /* Текст на вертикальном экране лежит внизу — там вуаль и делаем плотнее,
-       а верх кадра оставляем светлым */
+       а верх кадра (панель, мебель) оставляем светлым.
+       Затемнение доведено до 75 % высоты: правый край строки «— Москва и МО»
+       попадал на светлое окно и белые буквы там пропадали. */
     .hero-veil {
       background:
         linear-gradient(
           to top,
-          rgba(28, 18, 9, 0.72) 0%,
-          rgba(28, 18, 9, 0.36) 34%,
-          rgba(28, 18, 9, 0.1) 62%,
-          transparent 86%
+          rgba(28, 18, 9, 0.82) 0%,
+          rgba(28, 18, 9, 0.62) 30%,
+          rgba(28, 18, 9, 0.34) 55%,
+          rgba(28, 18, 9, 0.12) 75%,
+          transparent 92%
         ),
-        linear-gradient(100deg, rgba(28, 18, 9, 0.34) 0%, rgba(28, 18, 9, 0.1) 45%, transparent 75%);
+        linear-gradient(100deg, rgba(28, 18, 9, 0.3) 0%, rgba(28, 18, 9, 0.08) 50%, transparent 80%);
     }
   }
 
@@ -313,66 +316,24 @@ const tall = await getImage({
     }
   }
 
-  /* --- Телефон: кадр отдельно, текст отдельно --------------------------
-     На узком экране снимок занимал 60 % высоты, а под ним оставалась полоса
-     пустого фона и «надкусанный» следующий раздел. Разносим: сверху кадр
-     целиком, под ним — заголовок на спокойном фоне. Заодно текст перестаёт
-     лежать поверх мебели и читается без вуали.
-     Блок стоит последним: правила выше имеют ту же специфичность, и, стоя
-     раньше, он не мог перебить, например, padding-top: 7rem у .hero-inner. */
+  /* --- Телефон -----------------------------------------------------------
+     Текст остаётся поверх кадра, как и на большом экране. Здесь только то,
+     что не помещалось: строка «— Москва и МО» упиралась в край. */
   @media (max-width: 640px) {
-    .hero {
-      height: auto;
-      aspect-ratio: auto;
-      max-height: none;
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      background: var(--c-bg);
-      color: var(--c-ink);
-    }
-    .hero-media {
-      position: relative;
-      inset: auto;
-      flex: 0 0 auto;
-      aspect-ratio: 39 / 50;
-    }
-    /* вуаль нужна была только под текст — теперь он на своём фоне */
-    .hero-veil,
-    .hero-grain {
-      display: none;
-    }
+    /* Кадр показан целиком, поэтому текст ложится и на светлые места —
+       на окно справа. Вуаль там слабая (иначе потемнеет вся комната),
+       так что читаемость держим тенью самого текста. */
     .hero-inner {
-      height: auto;
-      flex: 1 1 auto;
-      justify-content: center;
-      padding-top: clamp(1.6rem, 5vw, 2.4rem);
-      padding-bottom: clamp(1.6rem, 5vw, 2.4rem);
-      text-shadow: none;
+      text-shadow:
+        0 1px 2px rgba(26, 16, 8, 0.75),
+        0 2px 16px rgba(26, 16, 8, 0.9);
     }
     .hero-eyebrow {
-      color: var(--c-accent);
-      /* длинная строка «— Москва и МО» упиралась в край экрана */
       font-size: 0.72rem;
       letter-spacing: 0.16em;
-      margin-bottom: 1rem;
     }
     .hero-title {
       font-size: clamp(2.2rem, 10.5vw, 3.1rem);
-    }
-    .hero-title .accent {
-      color: var(--c-accent);
-    }
-    .hero-lead {
-      color: var(--c-ink-soft);
-    }
-    .hero-foot {
-      margin-top: 1.2rem;
-    }
-    /* Указатель «прокрутите» тут лишний: под кадром и так виден текст,
-       а без него первый экран помещается целиком */
-    .hero-scroll {
-      display: none;
     }
   }
 </style>
@@ -422,17 +383,12 @@ const tall = await getImage({
       });
     }
 
-    // Уход текста при прокрутке уместен, только пока он лежит поверх кадра.
-    // На телефоне заголовок стоит под снимком на своём фоне — там он должен
-    // просто спокойно уехать вверх вместе со страницей.
-    if (!window.matchMedia('(max-width: 640px)').matches) {
-      gsap.to('.hero-inner', {
-        yPercent: -12,
-        autoAlpha: 0.4,
-        ease: 'none',
-        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-      });
-    }
+    gsap.to('.hero-inner', {
+      yPercent: -12,
+      autoAlpha: 0.4,
+      ease: 'none',
+      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
+    });
   }
 
   initHero();
