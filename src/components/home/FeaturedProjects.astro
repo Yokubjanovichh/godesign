@@ -91,6 +91,12 @@ import { link } from '../../utils/link';
     grid-template-columns: repeat(2, 1fr);
     gap: clamp(2rem, 4vw, 3.4rem) clamp(1.5rem, 3vw, 2.6rem);
   }
+  /* На широком мониторе — три плитки в ряд, иначе кадры разрастаются */
+  @media (min-width: 1500px) {
+    .proj-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
   .proj-card {
     display: grid;
     grid-template-rows: auto auto;

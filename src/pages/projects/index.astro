@@ -75,6 +75,18 @@ import { link } from '../../utils/link';
     grid-template-columns: repeat(2, 1fr);
     gap: clamp(2rem, 5vw, 4.5rem) clamp(1.4rem, 3vw, 2.6rem);
   }
+  /* На широком мониторе две колонки давали кадры под 900 px — вместо этого
+     показываем три проекта в ряд, а на 4K — четыре */
+  @media (min-width: 1500px) {
+    .projects-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 2200px) {
+    .projects-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
   /* Проекты в один уровень, без шахматного смещения (по замечанию Ольги) */
   .pcard {
     display: grid;
