@@ -104,10 +104,13 @@ const tall = await getImage({
     object-fit: cover;
     object-position: center 42%;
   }
-  /* Горизонтальный кадр уже скадрирован под 2:1 — показываем как есть */
+  /* Широкий кадр (2000×1230) чуть ниже пропорций монитора, поэтому по высоте
+     его немного подрезает. Смещаем точку кадрирования вверх: сверху лежат
+     подсветка и волнистый верх панели — Ольга просила, чтобы они были видны;
+     снизу теряются только ножки кресел. */
   @media (min-width: 768px) {
     .hero-img {
-      object-position: center center;
+      object-position: center 20%;
     }
   }
 
@@ -152,19 +155,22 @@ const tall = await getImage({
   /* Тёплая вуаль: плотнее слева-снизу, где лежит текст, и почти прозрачная
      справа — заголовок больше не сливается со светлой панелью
      (по замечанию Ольги «сливается цвет, поменять») */
+  /* Вуаль заметно ослаблена: было 0.74 слева, и Ольга написала «темновато,
+     не видна панель». Читаемость заголовка теперь держит тень букв, а не
+     затемнение всего кадра. */
   .hero-veil {
     position: absolute;
     inset: 0;
     background:
       linear-gradient(
         100deg,
-        rgba(28, 18, 9, 0.74) 0%,
-        rgba(28, 18, 9, 0.52) 24%,
-        rgba(28, 18, 9, 0.22) 46%,
-        rgba(28, 18, 9, 0.05) 66%,
-        transparent 82%
+        rgba(28, 18, 9, 0.52) 0%,
+        rgba(28, 18, 9, 0.34) 26%,
+        rgba(28, 18, 9, 0.14) 48%,
+        rgba(28, 18, 9, 0.03) 68%,
+        transparent 84%
       ),
-      linear-gradient(to top, rgba(28, 18, 9, 0.58) 0%, rgba(28, 18, 9, 0.16) 42%, transparent 74%);
+      linear-gradient(to top, rgba(28, 18, 9, 0.42) 0%, rgba(28, 18, 9, 0.1) 44%, transparent 76%);
   }
   .hero-grain {
     position: absolute;
@@ -185,10 +191,10 @@ const tall = await getImage({
     justify-content: flex-end;
     padding-bottom: clamp(2.5rem, 6vh, 4.5rem);
     padding-top: 7rem;
-    /* Мягкая тень — текст читается на светлом тёплом кадре без плотной вуали */
+    /* Тень вместо плотной вуали: кадр остаётся светлым, а текст читается */
     text-shadow:
-      0 1px 3px rgba(26, 16, 8, 0.35),
-      0 2px 34px rgba(26, 16, 8, 0.5);
+      0 1px 3px rgba(26, 16, 8, 0.55),
+      0 2px 30px rgba(26, 16, 8, 0.75);
   }
   .hero-eyebrow {
     display: flex;
@@ -212,7 +218,9 @@ const tall = await getImage({
   .hero-title {
     font-family: var(--f-display);
     font-weight: 400;
-    font-size: clamp(2.5rem, 7.4vw, 7rem);
+    /* Было 7.4vw / до 7rem. Ольга: заголовок против логотипа и вертикальной
+       подписи смотрелся непропорционально — «нужно добиться гармонии». */
+    font-size: clamp(2.4rem, 6vw, 5.4rem);
     line-height: 0.96;
     letter-spacing: -0.03em;
     margin: 0;
@@ -281,8 +289,9 @@ const tall = await getImage({
     100% { transform: translateY(250%); }
   }
   .hero-scroll-label {
-    font-size: 0.62rem;
-    letter-spacing: 0.22em;
+    /* было 0.62rem — на фоне крупного заголовка подпись терялась */
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(246, 239, 228, 0.7);
     writing-mode: vertical-rl;

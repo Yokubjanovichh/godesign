@@ -114,13 +114,15 @@ import { link } from '../../utils/link';
     border-radius: var(--radius);
     background: var(--c-bg-warm);
     align-self: start;
+    /* Квадрат — по просьбе Ольги: в натуральных пропорциях плитки выходили
+       разной высоты и «прыгали». Обложки она подбирает под квадрат сама. */
+    aspect-ratio: 1 / 1;
   }
-  /* Кадр целиком, в натуральных пропорциях: квадрат срезал у горизонтальных
-     снимков четверть комнаты (замечание Ольги «чтобы видели») */
   .proj-img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     transition: transform 1.2s var(--ease-out);
   }
   .proj-card:hover .proj-img {
