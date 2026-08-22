@@ -41,6 +41,10 @@ const ogImage = new URL(image, Astro.site);
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
 
+    <!-- Подтверждение прав в Яндекс.Вебмастере. Дублирует файл
+         /yandex_00a522f532045c49.html — Яндекс принимает любой из способов. -->
+    <meta name="yandex-verification" content="00a522f532045c49" />
+
     <link rel="preload" as="font" type="font/woff2" href={manropeCyr} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={playfairCyr} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={playfairCyrItalic} crossorigin />
