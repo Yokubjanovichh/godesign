@@ -3,8 +3,10 @@ import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import { link } from '../utils/link';
 import { services, servicesNote } from '../data/services';
-// Временный баннер — Ольга выбирает своё «центральное» фото для этой страницы.
-import banner from '../assets/projects/edem/01.webp';
+// Фото для баннера выбрала Ольга. Оригинал у неё 1280×740 (пришло через
+// мессенджер, то есть уже сжатое), поэтому вверх не растягиваем — иначе
+// снова появится зернистость, на которую она жаловалась в кадре героя.
+import banner from '../assets/services-banner.webp';
 ---
 
 <Base
@@ -18,10 +20,10 @@ import banner from '../assets/projects/edem/01.webp';
       <figure class="sv-banner reveal">
         <Image
           src={banner}
-          alt="Интерьер работы Ольги Горчаковой"
-          widths={[760, 1120, 1600]}
-          sizes="(max-width: 1024px) 94vw, 1360px"
-          quality={80}
+          alt="Ольга Горчакова"
+          widths={[640, 960, 1280]}
+          sizes="(max-width: 1024px) 94vw, 1280px"
+          quality={88}
           loading="eager"
           fetchpriority="high"
           class="sv-banner-img"
@@ -165,6 +167,10 @@ import banner from '../assets/projects/edem/01.webp';
   .sv-banner-img {
     display: block;
     width: 100%;
+    /* Не растягиваем выше исходных 1280 px: на широком мониторе контейнер
+       доходит до 2600 px, и кадр рассыпался бы в зерно */
+    max-width: 1280px;
+    margin-inline: auto;
     height: auto; /* натуральные пропорции — кадр не обрезается */
     border-radius: var(--radius);
   }
