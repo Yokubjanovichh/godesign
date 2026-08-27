@@ -66,19 +66,14 @@ import banner from '../assets/projects/edem/01.webp';
                   )}
                   <p class="sv-lead">{s.lead}</p>
 
-                  {s.blocks.map((b) =>
-                    b.k === 'h' ? (
-                      <h3 class="sv-block-h">{b.v}</h3>
-                    ) : b.k === 'sub' ? (
+                  {/* Короткая услуга — текст сразу */}
+                  {s.blocks?.map((b) =>
+                    b.k === 'sub' ? (
                       <p class="sv-block-sub">{b.v}</p>
                     ) : b.k === 'p' ? (
                       <p class="sv-p">{b.v}</p>
                     ) : b.k === 'ul' ? (
-                      <ul class="sv-ul">
-                        {b.v.map((x) => (
-                          <li>{x}</li>
-                        ))}
-                      </ul>
+                      <ul class="sv-ul">{b.v.map((x) => <li>{x}</li>)}</ul>
                     ) : (
                       <dl class="sv-dl">
                         {b.v.map((x) => (
@@ -89,6 +84,54 @@ import banner from '../assets/projects/edem/01.webp';
                         ))}
                       </dl>
                     )
+                  )}
+
+                  {/* Длинная — вложенные строки с «плюсом» */}
+                  {s.steps && (
+                    <ol class="sv-steps">
+                      {s.steps.map((st, j) => (
+                        <li class="sv-step">
+                          <h3 class="sv-step-h">
+                            <button
+                              type="button"
+                              class="sv-step-head"
+                              data-sv-step-btn
+                              aria-expanded="false"
+                              aria-controls={`sv-${s.slug}-${j}`}
+                            >
+                              <span class="sv-step-sign" aria-hidden="true" />
+                              <span class="sv-step-name">{st.t}</span>
+                            </button>
+                          </h3>
+                          <div
+                            class="sv-step-panel"
+                            id={`sv-${s.slug}-${j}`}
+                            data-sv-step-panel
+                          >
+                            <div class="sv-step-inner">
+                              {st.blocks.map((b) =>
+                                b.k === 'sub' ? (
+                                  <p class="sv-block-sub">{b.v}</p>
+                                ) : b.k === 'p' ? (
+                                  <p class="sv-p">{b.v}</p>
+                                ) : b.k === 'ul' ? (
+                                  <ul class="sv-ul">{b.v.map((x) => <li>{x}</li>)}</ul>
+                                ) : (
+                                  <dl class="sv-dl">
+                                    {b.v.map((x) => (
+                                      <>
+                                        <dt>{x.t}</dt>
+                                        <dd>{x.d}</dd>
+                                      </>
+                                    ))}
+                                  </dl>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ol>
                   )}
 
                   <a href={link('/contact')} class="sv-cta">
@@ -255,12 +298,91 @@ import banner from '../assets/projects/edem/01.webp';
     font-weight: 500;
     line-height: 1.55;
   }
-  .sv-block-h {
-    font-family: var(--f-display);
-    font-size: clamp(1.25rem, 2.1vw, 1.65rem);
-    font-weight: 400;
-    color: var(--c-accent-deep);
-    margin-top: clamp(1.6rem, 3vw, 2.2rem);
+  /* --- Второй уровень: этапы услуги ---------------------------------- */
+  .sv-steps {
+    list-style: none;
+    margin-top: clamp(1.4rem, 2.6vw, 2rem);
+    display: grid;
+    gap: 0.5rem;
+  }
+  /* Селектор с двумя классами — иначе .sv-panel-inner > * (та же
+     специфичность, но идёт раньше… и всё равно перебивает по весу)
+     оставлял строки на 64ch, и список выглядел обрубленным */
+  .sv-panel-inner > .sv-steps {
+    max-width: 86ch;
+  }
+  .sv-step-inner > * {
+    max-width: 64ch;
+  }
+  .sv-step {
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    background: var(--c-paper);
+  }
+  .sv-step-h {
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: normal;
+    line-height: inherit;
+    margin: 0;
+  }
+  .sv-step-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.95rem 1.1rem;
+    text-align: left;
+    color: inherit;
+  }
+  .sv-step-name {
+    font-family: var(--f-body);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  /* «+» → «−» */
+  .sv-step-sign {
+    position: relative;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+  }
+  .sv-step-sign::before,
+  .sv-step-sign::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 1.5px;
+    background: var(--c-accent);
+    transition: transform 0.35s var(--ease);
+  }
+  .sv-step-sign::after {
+    transform: rotate(90deg);
+  }
+  .sv-step-head[aria-expanded='true'] .sv-step-sign::after {
+    transform: rotate(0deg);
+  }
+
+  .sv-step-panel {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.45s var(--ease);
+  }
+  :global(html.js) .sv-step:not(.is-open) .sv-step-panel {
+    grid-template-rows: 0fr;
+  }
+  .sv-step-inner {
+    overflow: hidden;
+  }
+  .sv-step-inner > * {
+    padding-inline: 1.1rem;
+  }
+  .sv-step-inner > *:first-child {
+    margin-top: 0;
+    padding-top: 0.2rem;
+  }
+  .sv-step-inner > *:last-child {
+    padding-bottom: 1.1rem;
   }
   .sv-block-sub {
     margin-top: 1.3rem;
@@ -412,6 +534,22 @@ import banner from '../assets/projects/edem/01.webp';
               else window.scrollBy({ top: delta, behavior: 'smooth' });
             }
           });
+        },
+        { signal }
+      );
+    });
+
+    // Второй уровень — этапы внутри услуги. Открываются независимо друг от
+    // друга: человек читает один этап, остальные остаются свёрнутыми.
+    list.querySelectorAll<HTMLElement>('[data-sv-step-btn]').forEach((btn) => {
+      btn.addEventListener(
+        'click',
+        () => {
+          const step = btn.closest('.sv-step');
+          if (!step) return;
+          const open = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', String(!open));
+          step.classList.toggle('is-open', !open);
         },
         { signal }
       );
